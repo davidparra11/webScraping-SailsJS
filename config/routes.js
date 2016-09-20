@@ -34,7 +34,10 @@ module.exports.routes = {
 
   '/': {
     view: 'index'
-  }
+  },
+  '/procuraduria': {
+    view: 'procuraduria'
+  },
 
   /***************************************************************************
   *                                                                          *
@@ -45,5 +48,7 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
+
+  'GET /boletin': 'BoletinController.find'
 
 };
