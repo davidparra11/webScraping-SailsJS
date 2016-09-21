@@ -6,9 +6,26 @@
  */
 
 module.exports = {
-
-  attributes: {
-
-  }
+ 
+    //connection: 'mysql',
+    attributes: {
+        id: {
+            type: 'integer',
+            autoIncrement: true,
+            primaryKey: true
+        },
+        titulo: {
+            type: 'string'
+        },
+        texto: {
+            type: 'string'
+        },
+        fuente: {
+            type: 'string'
+        },
+        fecha: {
+            type: 'string'
+        }
+    }
 };
 
