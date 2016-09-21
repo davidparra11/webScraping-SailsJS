@@ -49,6 +49,8 @@ module.exports = {
 
 		});
 
+		return res.view('procuraduria');
+
 	},
 
 
@@ -111,10 +113,6 @@ module.exports = {
 		});
 		return res.view('procuraduria2010');
 
-
-		var button = document.querySelector('#button'); 
-		button.addEventListener('click', function(e) {
-			console.log('hola mundo')
         
       });
 
