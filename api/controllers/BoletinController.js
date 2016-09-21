@@ -26,7 +26,7 @@ module.exports = {
 				$('a.news-list-title').each(function(){
 					//var url =  $(this).attr('href');
 					var url =  $(this).text();
-					console.log('URL ' + JSON.stringify(url));
+					console.log('Texto: ' + JSON.stringify(url));
 					/*if(url.indexOf('i.imgur.com')!= -1){
 						urls.push(url);
 						console.log('URLS ' + JSON.stringify(urls));
@@ -34,15 +34,6 @@ module.exports = {
 					
 				});
 
-				console.log(urls.length);
-				for(var i = 0; i < urls.length; i++){
-					request(urls[i]).pipe(fs.createWriteStream('files/' + i + '.jpg'));
-
-					return res.send(200, {
-                            "message": "not found information about this person (username dont exist)",
-                            "data": urls
-                        });
-				}
 
 			}
 
@@ -68,7 +59,7 @@ module.exports = {
 				$('.textomed2').each(function(){
 					//var url =  $(this).attr('href');
 					var url =  $(this).text();
-					console.log('URL ' + JSON.stringify(url));
+					console.log('Texto: ' + JSON.stringify(url));
 					/*if(url.indexOf('i.imgur.com')!= -1){
 						urls.push(url);
 						console.log('URLS ' + JSON.stringify(urls));
@@ -114,7 +105,7 @@ module.exports = {
 		return res.view('procuraduria2010');
 
         
-      });
+
 
 	}
 };
