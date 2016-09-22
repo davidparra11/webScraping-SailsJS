@@ -51,5 +51,6 @@ module.exports.routes = {
 
   'GET /boletin': 'BoletinController.find',
   'GET /boletin2010': 'BoletinController.findOld',
+  'GET /individual': 'BoletinController.individual'
 
 };

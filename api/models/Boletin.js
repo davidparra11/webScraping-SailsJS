@@ -8,6 +8,9 @@
 module.exports = {
  
     //connection: 'mysql',
+    autoCreatedAt: false,
+	autoUpdatedAt: false,
+	
     attributes: {
         id: {
             type: 'integer',
@@ -17,15 +20,28 @@ module.exports = {
         titulo: {
             type: 'string'
         },
-        texto: {
+        boletin: {
             type: 'string'
+        },
+        textoCompleto: {
+            type: 'string',
+            size: 10000
+        },
+        textoUnoDos: {
+            type: 'string',
+            size: 5000
         },
         fuente: {
             type: 'string'
         },
         fecha: {
             type: 'string'
-        }
+        },
+        creationDate: {
+	        columnName: 'cre_dt',
+	        type: 'datetime',
+	        defaultsTo: function() {return new Date();}
+    	}
     }
 };
 
