@@ -15,7 +15,8 @@ var request = require('request'),
 	boletinArrayHtml = [],
 	urls = [],
 	cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004];
+	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
+	 utils = require('../utlities/Util');
 
 const util = require('util');
 
@@ -88,8 +89,9 @@ module.exports = {
 
 						if (i < 10) {
 						    var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_00' + i + '.htm';
+						    utils(dirInterna);
 						   // var dirBoletProcAntes2010 = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_933.htm';
-						    request(dirInterna, function(err, resp, body) {
+						   /* request(dirInterna, function(err, resp, body) {
 
 						    	if (!err && resp.statusCode == 200) {
 									//console.log('body ' + JSON.stringify(body));
@@ -100,17 +102,22 @@ module.exports = {
 									console.log('Texto: ' + JSON.stringify(url));
 								}
 
-						    });
+						    });*/
+							util
+
 						} else if (i > 9 && i < 100) {
 						    var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_0' + i + '.htm';
-						    request(dirInterna, function(err, resp, body) {
+						    utils(dirInterna);
+
+						    /*request(dirInterna, function(err, resp, body) {
 						    	
-						    });
+						    });*/
 						} else {
 						    var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_' + i + '.htm';
-						    request(dirInterna, function(err, resp, body) {
+						    utils(dirInterna);
+						    /*request(dirInterna, function(err, resp, body) {
 						    	
-						    });
+						    });*/
 						}
 
 						console.log('dir dirInterna: ' + JSON.stringify(dirInterna));
