@@ -125,7 +125,11 @@ module.exports = {
 							fuente: 'no aplica'
 						};
 
-						boletinArray.length = 0;
+						//boletinArray.length = 0;
+
+						utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+
+					boletinArray.length = 0;
 						//console.log(x);
 						/*Boletin.create(x)
 						.exec(function(error, boletin) {
