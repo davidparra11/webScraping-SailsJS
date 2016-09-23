@@ -440,7 +440,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 	individual: function(req, res) {
 
 		console.log('find function ');
-		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm', function(err, resp, body) {
+		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_821.htm', function(err, resp, body) {
 			console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
@@ -488,7 +488,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				console.log('Texto1y2: ' + textoUnoDos);
 
 
-				var x = {
+			/*	var x = {
 					titulo: titulo,
 					boletin: boletin,
 					textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
@@ -515,7 +515,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 							}]
 						});
 					}
-				}); /**/
+				}); */
 
 			}
 
