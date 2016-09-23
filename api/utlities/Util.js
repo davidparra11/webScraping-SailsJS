@@ -6,7 +6,7 @@ var request = require('request'),
 	urls = [];
 
 module.exports = {
-    agregarToDB: function(direccion, year, i, y) {
+    descargar: function(direccion, year, i, y) {
 
     	request(direccion, function(err, resp, body) {
 		//	console.log('resp ' + JSON.stringify(resp.statusCode));
@@ -107,6 +107,51 @@ module.exports = {
 
        
     },
+
+    agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha) {
+
+    	
+
+				var x = {
+					titulo: titulo,
+					boletin: boletin,
+					textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
+					textoUnoDos: textoUnoDos,
+					fecha: fecha,
+					fuente: 'no aplica'
+				};
+
+				boletinArray.length = 0;
+				//console.log(x);
+				Boletin.create(x)
+				.exec(function(error, boletin) {
+					console.log(boletin);
+					if (error) {
+						//  utils.showLogs(409, "ERROR", method, controller, 1);
+						/*return res.send(409, {
+							"message": "Conflict to create boletin",
+							"data": error
+						});*/
+						console.log('error DB');
+
+					} else {
+						//   utils.showLogs(200, "OK", method, controller, 0);
+						/*return res.send(200, {
+							"message": "Create boletin success",
+							"data": [{
+								id: "boletin.id OK"
+							}]
+						});*/
+						console.log('OK');
+						return true;
+					}
+				}); /**/
+
+				//return true;
+				
+
+       
+    }
    
 }
 

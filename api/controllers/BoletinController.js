@@ -71,79 +71,51 @@ module.exports = {
 
 	findOld: function(req, res) {
 
-		console.log('entro por find function ');
-		//http://stackoverflow.com/questions/22978843/how-to-make-for-loop-wait-until-async-call-was-successful-before-to-continue
+		console.log('Recurso para tomar datos del 2010 hacia atrás ');
 
 		var i = 1;
 		var totContador = 120;
-		bucleContador(i, totContador);
-
+		//bucleContador(i, totContador);
+		year = 2010;
+		dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_00' + i + '.htm';
 
 		function bucleContador(i, totContador) {
-			y = 930;
+			y = 130;
 			if (i === undefined)
 				i = 1;
 			if (i >= totContador) return;
 
-
-
-			if (i < 10) {
-
-				year = 2010;
-				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm';
-
-				//console.log('YEAR: '+ year + ' -i: ' + i);
-				//utils.agregarToDB(dirInterna, year, i, y);
-				//utils.agregarToDB(dirInterna, year, i, y);
-				// var dirBoletProcAntes2010 = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_933.htm';
-				request(dirInterna, function(err, resp, body) {
-					//	console.log('resp ' + JSON.stringify(resp.statusCode));
+			request(dirInterna, function(err, resp, body) {
 
 					if (!err && resp.statusCode == 200) {
-						//console.log('body ' + JSON.stringify(body));
-
 						var $ = cheerio.load(body);
-						//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
-
 						var fecha = "";
-
-
 
 						$('p').each(function() {
 							//var url =  $(this).attr('href');
 							var datos = $(this).last().text();
 							//	console.log('Texto: ' + JSON.stringify(datos));
 							boletinArray.push(datos);
-
 						});
 
-
-
 						var finalParrafo = boletinArray.length - 1;
-
 						var boletin = boletinArray.slice(0, 1).toString();
 						var titulo = boletinArray.slice(1, 2).toString();
 						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-
 						var textoUnoDos = boletinArray.slice(4, 6).toString();
-
 
 						//se implementa para sacar la fecha del archivo html.			
 						$('span.textopeq').each(function() {
 							var datoFecha = $(this).text();
 							console.log('Fecha: ' + JSON.stringify(datoFecha));
 							fecha = datoFecha;
-
-
 						});
-						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
 
+						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
 						console.log('boletin: ' + JSON.stringify(boletin));
 						console.log('Titulo: ' + JSON.stringify(titulo));
 						//console.log('TextoCompletoUno: ' + textoCompletoUno);
 						//console.log('Texto1y2: ' + textoUnoDos);
-
-
 						var x = {
 							titulo: titulo,
 							boletin: boletin,
@@ -181,241 +153,43 @@ module.exports = {
 
 						//return true;
 						i++;
-						bucleContador(i, y);
 
+						if (i < 10) {
 
-					} else {
+							year = 2010;
+						    dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_00' + i + '.htm';
 
-						console.log('Hubo un error en la descarga de la página');
-						i++;
-						bucleContador(i, y);
-					}
+						    bucleContador(i, y);						
 
-				});
+						} else if (i > 9 && i < 100) {
+							//console.log('YEAR: '+ year + 'i: ' + i);
+							year = 2010;
+						    dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_0' + i + '.htm';
 
-
-			} else if (i > 9 && i < 100) {
-
-				//console.log('YEAR: '+ year + 'i: ' + i);
-				year = 2010;
-				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_0' + i + '.htm';
-				//utils.agregarToDB(dirInterna, year, i, y);
-				// utils.agregarToDB(dirInterna, year, i, y);
-
-				request(dirInterna, function(err, resp, body) {
-					//	console.log('resp ' + JSON.stringify(resp.statusCode));
-
-					if (!err && resp.statusCode == 200) {
-						//console.log('body ' + JSON.stringify(body));
-
-						var $ = cheerio.load(body);
-						//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
-
-						var fecha = "";
-
-
-
-						$('p').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							//	console.log('Texto: ' + JSON.stringify(datos));
-							boletinArray.push(datos);
-
-						});
-
-
-
-						var finalParrafo = boletinArray.length - 1;
-
-						var boletin = boletinArray.slice(0, 1).toString();
-						var titulo = boletinArray.slice(1, 2).toString();
-						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-
-						var textoUnoDos = boletinArray.slice(4, 6).toString();
-
-
-						//se implementa para sacar la fecha del archivo html.			
-						$('span.textopeq').each(function() {
-							var datoFecha = $(this).text();
-							console.log('Fecha: ' + JSON.stringify(datoFecha));
-							fecha = datoFecha;
-
-
-						});
-						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
-
-						console.log('boletin: ' + JSON.stringify(boletin));
-						console.log('Titulo: ' + JSON.stringify(titulo));
-						//console.log('TextoCompletoUno: ' + textoCompletoUno);
-						//console.log('Texto1y2: ' + textoUnoDos);
-
-
-						var x = {
-							titulo: titulo,
-							boletin: boletin,
-							textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
-							textoUnoDos: textoUnoDos,
-							fecha: fecha,
-							fuente: 'no aplica'
-						};
-
-						boletinArray.length = 0;
-						//console.log(x);
-						/*Boletin.create(x)
-						.exec(function(error, boletin) {
-							console.log(boletin);
-							if (error) {
-								//  utils.showLogs(409, "ERROR", method, controller, 1);
-								/*return res.send(409, {
-									"message": "Conflict to create boletin",
-									"data": error
-								});
-								console.log('error DB');
-
-							} else {*/
-						//   utils.showLogs(200, "OK", method, controller, 0);
-						/*return res.send(200, {
-							"message": "Create boletin success",
-							"data": [{
-								id: "boletin.id OK"
-							}]
-						});
-						console.log('OK');
-						return true;
-					}
-				}); */
-
-						//return true;
-						i++;
-						bucleContador(i, y);
-
-
-					} else {
-
-						console.log('Hubo un error en la descarga de la página');
-						i++;
-						bucleContador(i, y);
-					}
-
-				});
-
-
-
-				/*request(dirInterna, function(err, resp, body) {
+						    bucleContador(i, y);
+						    
+						} else {
+							//console.log('YEAR: '+ year + '@i: ' + i);
+							year = 2010;
+						    dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_' + i + '.htm';
+						    bucleContador(i, y);						    
+						}
 					
-				});*/
-			} else {
-				//console.log('YEAR: '+ year + '@i: ' + i);
-				year = 2010;
-				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_' + i + '.htm';
-				//utils.agregarToDB(dirInterna, year, i, y);
-				//utils.agregarToDB(dirInterna, year, i, y);
-
-
-				request(dirInterna, function(err, resp, body) {
-					//	console.log('resp ' + JSON.stringify(resp.statusCode));
-
-					if (!err && resp.statusCode == 200) {
-						//console.log('body ' + JSON.stringify(body));
-
-						var $ = cheerio.load(body);
-						//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
-
-						var fecha = "";
-
-
-
-						$('p').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							//	console.log('Texto: ' + JSON.stringify(datos));
-							boletinArray.push(datos);
-
-						});
-
-
-
-						var finalParrafo = boletinArray.length - 1;
-
-						var boletin = boletinArray.slice(0, 1).toString();
-						var titulo = boletinArray.slice(1, 2).toString();
-						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-
-						var textoUnoDos = boletinArray.slice(4, 6).toString();
-
-
-						//se implementa para sacar la fecha del archivo html.			
-						$('span.textopeq').each(function() {
-							var datoFecha = $(this).text();
-							console.log('Fecha: ' + JSON.stringify(datoFecha));
-							fecha = datoFecha;
-
-
-						});
-						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
-
-						console.log('boletin: ' + JSON.stringify(boletin));
-						console.log('Titulo: ' + JSON.stringify(titulo));
-						//console.log('TextoCompletoUno: ' + textoCompletoUno);
-						//console.log('Texto1y2: ' + textoUnoDos);
-
-
-						var x = {
-							titulo: titulo,
-							boletin: boletin,
-							textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
-							textoUnoDos: textoUnoDos,
-							fecha: fecha,
-							fuente: 'no aplica'
-						};
-
-						boletinArray.length = 0;
-						//console.log(x);
-						/*Boletin.create(x)
-						.exec(function(error, boletin) {
-							console.log(boletin);
-							if (error) {
-								//  utils.showLogs(409, "ERROR", method, controller, 1);
-								/*return res.send(409, {
-									"message": "Conflict to create boletin",
-									"data": error
-								});
-								console.log('error DB');
-
-							} else {*/
-						//   utils.showLogs(200, "OK", method, controller, 0);
-						/*return res.send(200, {
-							"message": "Create boletin success",
-							"data": [{
-								id: "boletin.id OK"
-							}]
-						});
-						console.log('OK');
-						return true;
-					}
-				}); */
-
-						//return true;
-						i++;
-						bucleContador(i, y);
-
-
 					} else {
-
 						console.log('Hubo un error en la descarga de la página');
 						i++;
 						bucleContador(i, y);
 					}
 
 				});
-
-
 				/*request(dirInterna, function(err, resp, body) {
 					
 				});*/
 			}
 
-		}
+			bucleContador(i, totContador);
+
+		
 
 
 
@@ -483,35 +257,9 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
 				console.log('Texto1y2: ' + textoUnoDos);
 
+				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 
-				/*	var x = {
-						titulo: titulo,
-						boletin: boletin,
-						textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
-						textoUnoDos: textoUnoDos,
-						fecha: fecha,
-						fuente: 'no aplica'
-					};
-					//console.log(x);
-					Boletin.create(x)
-					.exec(function(error, boletin) {
-						console.log(boletin);
-						if (error) {
-							//  utils.showLogs(409, "ERROR", method, controller, 1);
-							return res.send(409, {
-								"message": "Conflict to create boletin",
-								"data": error
-							});
-						} else {
-							//   utils.showLogs(200, "OK", method, controller, 0);
-							return res.send(200, {
-								"message": "Create boletin success",
-								"data": [{
-									id: "boletin.id OK"
-								}]
-							});
-						}
-					}); */
+					boletinArray.length = 0;
 
 			}
 
