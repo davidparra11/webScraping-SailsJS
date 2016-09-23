@@ -16,6 +16,9 @@ var request = require('request'),
 	urls = [],
 	cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
+	i = 1,
+	year = 2010,
+	dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_00' + i + '.htm',
 	utils = require('../utlities/Util');
 
 const util = require('util');
@@ -73,19 +76,24 @@ module.exports = {
 
 		console.log('Recurso para tomar datos del 2010 hacia atrás ');
 
-		var i = 1;
-		var totContador = 120;
+		var boletinesFalsos = [];
+
+		var i = 290;
+		var totContador = 920;
 		//bucleContador(i, totContador);
 		year = 2010;
-		dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_00' + i + '.htm';
+		
+
+		bucleContador(i, totContador);
 
 		function bucleContador(i, totContador) {
-			y = 130;
+			y = 920;
 			if (i === undefined)
 				i = 1;
-			if (i >= totContador) return;
+			if (i >= totContador) return;  
 
 			request(dirInterna, function(err, resp, body) {
+				i++;
 
 					if (!err && resp.statusCode == 200) {
 						var $ = cheerio.load(body);
@@ -98,12 +106,6 @@ module.exports = {
 							boletinArray.push(datos);
 						});
 
-						var finalParrafo = boletinArray.length - 1;
-						var boletin = boletinArray.slice(0, 1).toString();
-						var titulo = boletinArray.slice(1, 2).toString();
-						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-						var textoUnoDos = boletinArray.slice(4, 6).toString();
-
 						//se implementa para sacar la fecha del archivo html.			
 						$('span.textopeq').each(function() {
 							var datoFecha = $(this).text();
@@ -111,6 +113,17 @@ module.exports = {
 							fecha = datoFecha;
 						});
 
+
+						var finalParrafo = boletinArray.length - 1;
+						var boletin = boletinArray.slice(0, 1).toString();
+						var titulo = boletinArray.slice(1, 2).toString();
+						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
+						var textoUnoDos = boletinArray.slice(4, 6).toString();
+
+						if (titulo.length < 6)
+							boletinesFalsos.push(i);
+
+						
 						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
 						console.log('boletin: ' + JSON.stringify(boletin));
 						console.log('Titulo: ' + JSON.stringify(titulo));
@@ -127,36 +140,12 @@ module.exports = {
 
 						//boletinArray.length = 0;
 
-						utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+						//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 
-					boletinArray.length = 0;
-						//console.log(x);
-						/*Boletin.create(x)
-						.exec(function(error, boletin) {
-							console.log(boletin);
-							if (error) {
-								//  utils.showLogs(409, "ERROR", method, controller, 1);
-								/*return res.send(409, {
-									"message": "Conflict to create boletin",
-									"data": error
-								});
-								console.log('error DB');
-
-							} else {*/
-						//   utils.showLogs(200, "OK", method, controller, 0);
-						/*return res.send(200, {
-							"message": "Create boletin success",
-							"data": [{
-								id: "boletin.id OK"
-							}]
-						});
-						console.log('OK');
-						return true;
-					}
-				}); */
-
+						boletinArray.length = 0;
+					
 						//return true;
-						i++;
+						//i++;
 
 						if (i < 10) {
 
@@ -180,18 +169,23 @@ module.exports = {
 						}
 					
 					} else {
-						console.log('Hubo un error en la descarga de la página');
-						i++;
+						console.log('Hubo un error en la descarga de la página' + dirInterna + ' -i: ' + i);
+					//s	dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_' + i + '.htm';
+						//i++;
 						bucleContador(i, y);
 					}
 
 				});
 				/*request(dirInterna, function(err, resp, body) {
 					
-				});*/
+				});*/console.log('Boletines Falsos' + JSON.stringify(boletinesFalsos));
 			}
 
-			bucleContador(i, totContador);
+			console.log("Boletines Falsos" + boletinesFalsos);
+			return res.view('procuraduria2010');
+
+			
+
 
 		
 
@@ -214,7 +208,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 	individual: function(req, res) {
 
 		console.log('find function ');
-		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_821.htm', function(err, resp, body) {
+		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_001.htm', function(err, resp, body) {
 			console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
@@ -260,6 +254,11 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				console.log('Titulo: ' + JSON.stringify(titulo));
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
 				console.log('Texto1y2: ' + textoUnoDos);
+
+				console.log('Long boletin: ' + JSON.stringify(boletin.length));
+				console.log('Long Titulo: ' + JSON.stringify(titulo.length));
+				console.log('Long TextoCompletoUno: ' + textoCompletoUno.length);
+				console.log('Long Texto1y2: ' + textoUnoDos.length);
 
 				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 

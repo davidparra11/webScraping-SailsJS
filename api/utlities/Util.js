@@ -108,14 +108,12 @@ module.exports = {
        
     },
 
-    agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha) {
-
-    	
+    agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha) {    	
 
 				var x = {
 					titulo: titulo,
 					boletin: boletin,
-					textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
+					textoCompleto: textoCompletoUno,
 					textoUnoDos: textoUnoDos,
 					fecha: fecha,
 					fuente: 'no aplica'
@@ -125,32 +123,17 @@ module.exports = {
 				//console.log(x);
 				Boletin.create(x)
 				.exec(function(error, boletin) {
-					console.log(boletin);
+					//console.log(boletin);
 					if (error) {
-						//  utils.showLogs(409, "ERROR", method, controller, 1);
-						/*return res.send(409, {
-							"message": "Conflict to create boletin",
-							"data": error
-						});*/
 						console.log('error DB');
-
-					} else {
-						//   utils.showLogs(200, "OK", method, controller, 0);
-						/*return res.send(200, {
-							"message": "Create boletin success",
-							"data": [{
-								id: "boletin.id OK"
-							}]
-						});*/
+						//return true;
+					} else {						
 						console.log('OK');
 						return true;
 					}
 				}); /**/
 
-				//return true;
-				
-
-       
+				//return true;       
     }
    
 }
