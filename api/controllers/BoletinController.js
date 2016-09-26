@@ -7,7 +7,7 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=13&wpgn=null&max_results=1000&first_result=0',
+	direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=11&wpgn=null&max_results=1000&first_result=0',
 	dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	Regex = require("regex"),
 	regex = new Regex(/(a|b)*abb/),
@@ -82,16 +82,108 @@ module.exports = {
 			}
 
 			//return 
-			console.log(linksArray);
+			//console.log(linksArray);
 
 
 
 			for (var llaveLink in linksArray) {
 				// Controlando que json realmente tenga esa propiedad
-				if (textoCompletoUnoString.hasOwnProperty(clave)) {
+				/*if (textoCompletoUnoString.hasOwnProperty(clave)) {
 					// Mostrando en pantalla la clave junto a su valor
 					console.log("JSON : La clave es " + clave + " y el valor es " + textoCompletoUnoString[clave]);
-				}
+				}*/
+				request('http://www.procuraduria.gov.co/portal/' + linksArray[llaveLink], function(err, resp, body) {
+					//console.log('resp ' + JSON.stringify(resp.statusCode));
+
+					if (!err && resp.statusCode == 200) {
+						//console.log('body ' + JSON.stringify(body));
+
+						var $ = cheerio.load(body);
+						//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
+
+						var fecha = "";
+
+						//texto
+						$('p.MsoNormal').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							//+ console.log('Texto: ' + JSON.stringify(datos));
+							//boletinArray.push(datos);
+
+						});
+						//titulo
+						$('h2.prueba').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							console.log('Tituto: ' + JSON.stringify(datos));
+							//boletinArray.push(datos);
+
+						});
+
+						//boletin
+
+						$('h3.news-view-subtitle').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+						//	console.log('Boletin: ' + JSON.stringify(datos));
+							//	boletinArray.push(datos);
+
+						});
+
+						//fecha
+
+						$('h4').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+						//	console.log('Fecha: ' + JSON.stringify(datos));
+							//boletinArray.push(datos);
+
+						});
+
+
+
+						/*var finalParrafo = boletinArray.length - 1;
+
+						var boletin = boletinArray.slice(0, 1).toString();
+						var titulo = boletinArray.slice(1, 2).toString();
+						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
+
+						var textoUnoDos = boletinArray.slice(4, 6).toString();
+
+
+						//se implementa para sacar la fecha del archivo html.			
+						$('span.textopeq').each(function() {
+							var datoFecha = $(this).text();
+							console.log('Fecha: ' + JSON.stringify(datoFecha));
+							fecha = datoFecha;
+
+
+						});
+
+						console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
+						console.log('boletin: ' + JSON.stringify(boletin));
+						console.log('Titulo: ' + JSON.stringify(titulo));
+						console.log('TextoCompletoUno: ' + textoCompletoUno);
+						console.log('Texto1y2: ' + textoUnoDos);
+
+						console.log('Long boletin: ' + JSON.stringify(boletin.length));
+						console.log('Long Titulo: ' + JSON.stringify(titulo.length));
+						console.log('Long TextoCompletoUno: ' + textoCompletoUno.length);
+						console.log('Long Texto1y2: ' + textoUnoDos.length);
+
+						utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);*/
+
+						boletinArray.length = 0;
+
+					} else {
+						console.log('hubo problemas con: ' + linksArray[llaveLink])
+						return true;
+					}
+
+				});
+
+
+
 			}
 
 
@@ -120,7 +212,7 @@ module.exports = {
 						var $ = cheerio.load(body);
 						console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
 
-						/*$('a.news-list-title').each(function() {
+						$('a.news-list-title').each(function() {
 							//var url =  $(this).attr('href');
 							var url = $(this).text();
 						//	console.log('Texto: ' + JSON.stringify(url));
@@ -129,7 +221,7 @@ module.exports = {
 							 console.log('URLS ' + JSON.stringify(urls));
 							 }
 
-						});*/
+						});
 
 						$('a.news-list-title').each(function() {
 							//var url =  $(this).attr('href');
@@ -451,7 +543,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 
 
 		console.log('find function ');
-		request('http://www.procuraduria.gov.co/portal/' + direccion , function(err, resp, body) {
+		request('http://www.procuraduria.gov.co/portal/' + direccion, function(err, resp, body) {
 			console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
@@ -463,45 +555,45 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				var fecha = "";
 
 				//texto
-				$('span').each(function() {
+				$('p.MsoNormal').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
 					console.log('Texto: ' + JSON.stringify(datos));
-					boletinArray.push(datos);
+					//boletinArray.push(datos);
 
 				});
 				//titulo
-				$('span').each(function() {
+				$('h2.prueba').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('Texto: ' + JSON.stringify(datos));
-					boletinArray.push(datos);
+					console.log('Tituto: ' + JSON.stringify(datos));
+					//boletinArray.push(datos);
 
 				});
 
 				//boletin
 
-				$('span').each(function() {
+				$('h3.news-view-subtitle').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('Texto: ' + JSON.stringify(datos));
-					boletinArray.push(datos);
+					console.log('Boletin: ' + JSON.stringify(datos));
+					//	boletinArray.push(datos);
 
 				});
 
 				//fecha
 
-				$('span').each(function() {
+				$('h4').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('Texto: ' + JSON.stringify(datos));
-					boletinArray.push(datos);
+					console.log('Fecha: ' + JSON.stringify(datos));
+					//boletinArray.push(datos);
 
 				});
 
 
 
-				var finalParrafo = boletinArray.length - 1;
+				/*var finalParrafo = boletinArray.length - 1;
 
 				var boletin = boletinArray.slice(0, 1).toString();
 				var titulo = boletinArray.slice(1, 2).toString();
@@ -530,7 +622,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				console.log('Long TextoCompletoUno: ' + textoCompletoUno.length);
 				console.log('Long Texto1y2: ' + textoUnoDos.length);
 
-				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);*/
 
 				boletinArray.length = 0;
 
