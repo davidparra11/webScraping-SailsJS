@@ -78,7 +78,7 @@ module.exports = {
 
 		var boletinesFalsos = [];
 
-		var i = 290;
+		var i =330;
 		var totContador = 920;
 		//bucleContador(i, totContador);
 		year = 2010;
@@ -97,37 +97,120 @@ module.exports = {
 
 					if (!err && resp.statusCode == 200) {
 						var $ = cheerio.load(body);
-						var fecha = "";
+						fecha = '';
 
 						$('p').each(function() {
 							//var url =  $(this).attr('href');
 							var datos = $(this).last().text();
-							//	console.log('Texto: ' + JSON.stringify(datos));
+							//	console.log('Texto: ' + JSON.stringify(datos));marcogris2
 							boletinArray.push(datos);
+							fechaArray = $(this).find("strong").text();
+							//console.log('Fecha:::::::::::::  ' + fechaArray.length);
+							if (fechaArray.length > 16 && fecha == ''  && fechaArray.length < 40 && fechaArray.search('[0-9]') != -1) // && fecha == '' 
+								fecha = fechaArray;
+
 						});
 
 						//se implementa para sacar la fecha del archivo html.			
-						$('span.textopeq').each(function() {
+						/**/$('span.textopeq').each(function() {
 							var datoFecha = $(this).text();
-							console.log('Fecha: ' + JSON.stringify(datoFecha));
-							fecha = datoFecha;
+							//console.log('Fecha: ' + JSON.stringify(datoFecha));
+							//+fecha = datoFecha;
 						});
 
 
 						var finalParrafo = boletinArray.length - 1;
 						var boletin = boletinArray.slice(0, 1).toString();
 						var titulo = boletinArray.slice(1, 2).toString();
-						var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
+					//	var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
 						var textoUnoDos = boletinArray.slice(4, 6).toString();
 
-						if (titulo.length < 6)
-							boletinesFalsos.push(i);
+						/*if (textoCompletoUno.length < 60)
+							boletinesFalsos.push(i);*/
+
+						if (boletin.length == 31){
+							boletin = boletin;
+						} else if (boletinArray[1].toString().length == 31) {
+							boletin = boletinArray[1].toString();
+						} else {
+							$('td.marcogris2').each(function() {
+							var datoBoletin = $(this).text();
+							//+console.log('Boletin: ' + JSON.stringify(datoBoletin));
+							boletin = datoBoletin;
+						});
+						}
+
+						if (titulo.length > 33 && boletinArray[0].toString().length == 31){
+							titulo = titulo;
+						} else if (boletinArray[0].length > 31) {
+							titulo = boletinArray[0].toString();
+						} else {
+
+						//+	console.log('boletinArray[1].: ' + JSON.stringify(boletinArray[1]));
+							titulo = boletinArray[1].toString();
+							if (boletinArray[1].toString().length < 15)
+								titulo = 'COMUNICADO DE PRENSA';
+						} 
+
+
+//bloque para filtrar todo el texto completo del boletin.
+						if (boletinArray[1].toString().length > 99){
+							textoCompletoUno = boletinArray.slice(1, finalParrafo);
+							
+						} else if (boletinArray[2].toString().length > 99) {
+							textoCompletoUno = boletinArray.slice(2, finalParrafo);
+							
+						} else {
+							textoCompletoUno = boletinArray.slice(3, finalParrafo);
+							if (boletinArray[2].toString().length < 99)
+								textoCompletoUno = boletinArray.slice(4, finalParrafo);
+
+						}
+
+						if (fecha == ''){
+
+							//var inicioFecha = textoCompletoUno.toString().indexOf(",");//indexOf es mas rapido. que search func.
+
+							var finalFecha = textoCompletoUno.toString().search(":");
+
+							//console.log('FechaInicial:::::::::::::  ' + inicioFecha);
+
+						//*	console.log('Final:::::::::::::  ' + finalFecha);
+
+							fecha = textoCompletoUno.toString().slice(0, 30);
+
+						}
+				
+
+					/*	var inicioFecha = textoCompletoUno.toString().indexOf(",");//indexOf es mas rapido. que search func.
+
+							var finalFecha = textoCompletoUno.toString().indexOf('.');
+
+							console.log('FechaInicial:::::::::::::  ' + inicioFecha);
+
+							console.log('Final:::::::::::::  ' + finalFecha);
+*/
+							//fecha = textoCompletoUno.slice(10, finalFecha).toString();
+
+
+
+
+						/*if (boletin.length == 31)
+							boletin = boletin;
+
+
+						if (boletinArray.slice(1, 2).toString().length == 31)
+							boletin = boletin;
+
+						if (boletinArray.slice(2, 3).toString().length == 31)
+							boletin = boletin;*/
 
 						
 						console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
-						console.log('boletin: ' + JSON.stringify(boletin));
-						console.log('Titulo: ' + JSON.stringify(titulo));
+						console.log('Boletin: ' + JSON.stringify(boletin));
+						//+console.log('Titulo: ' + JSON.stringify(titulo));
 						//console.log('TextoCompletoUno: ' + textoCompletoUno);
+						//console.log('Fecha:::::::::::::  ' + fecha);
 						//console.log('Texto1y2: ' + textoUnoDos);
 						var x = {
 							titulo: titulo,
@@ -170,8 +253,8 @@ module.exports = {
 					
 					} else {
 						console.log('Hubo un error en la descarga de la página' + dirInterna + ' -i: ' + i);
-					//s	dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_' + i + '.htm';
-						//i++;
+						dirInterna = 'http://www.procuraduria.gov.co/html/noticias_'+year+'/noticias_' + i + '.htm';
+						i++;
 						bucleContador(i, y);
 					}
 
@@ -207,8 +290,10 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 
 	individual: function(req, res) {
 
+		var numBoletin = req.param("boletin");
+
 		console.log('find function ');
-		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_001.htm', function(err, resp, body) {
+		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_' + numBoletin +'.htm', function(err, resp, body) {
 			console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
@@ -218,7 +303,6 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 				//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
 
 				var fecha = "";
-
 
 
 				$('p').each(function() {
@@ -249,7 +333,7 @@ http://www.procuraduria.gov.co/html/noticias_2010/noticias_933.htm*/
 
 				});
 
-
+				console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
 				console.log('boletin: ' + JSON.stringify(boletin));
 				console.log('Titulo: ' + JSON.stringify(titulo));
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
