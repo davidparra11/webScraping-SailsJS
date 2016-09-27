@@ -61,6 +61,8 @@ module.exports.routes = {
   // El método realiza un análisis en los archivos locales de la Contraloría. 
   'GET /contraloria': 'PersonasController.analizar',
   //Obtener todos los archivo de la ruta.
-  'GET /contraloria': 'PersonasController.recogerTodo'
+  'GET /archivosContraloria': 'PersonasController.recogerTodo',
+  //Método que desglosa los archivo html individualmente .
+  'GET /individualContraloria': 'PersonasController.recogerTodo'
 
 };

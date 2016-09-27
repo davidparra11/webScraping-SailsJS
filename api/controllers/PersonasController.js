@@ -21,19 +21,21 @@ var request = require('request'),
 var Xray = require('x-ray');
 var x = Xray();
 
-var walk    = require('walk');
-var files   = [];
+var walk = require('walk');
+var files = [];
 
-var walker  = walk.walk('./test', { followLinks: false });
+var walker = walk.walk('./test', {
+	followLinks: false
+});
 
 walker.on('file', function(root, stat, next) {
-    // Add this file to the list of files
-    files.push(root + '/' + stat.name);
-    next();
+	// Add this file to the list of files
+	files.push(root + '/' + stat.name);
+	next();
 });
 
 walker.on('end', function() {
-    console.log(files);
+	console.log(files);
 });
 
 
@@ -47,26 +49,24 @@ module.exports = {
 		var $ = cheerio.load(fs.readFileSync('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/search000d.html'));
 
 		$('b').each(function() {
-					//var url =  $(this).attr('href');
-					var url = $(this).text();
-					console.log('Texto: ' + JSON.stringify(url));
-					/*if(url.indexOf('i.imgur.com')!= -1){
-					 urls.push(url);
-					 console.log('URLS ' + JSON.stringify(urls));
-					 }
-					if (url !== undefined)
-						linksArray.push(url);*/
-				});
-
-
+			//var url =  $(this).attr('href');
+			var url = $(this).text();
+			console.log('Texto: ' + JSON.stringify(url));
+			/*if(url.indexOf('i.imgur.com')!= -1){
+			 urls.push(url);
+			 console.log('URLS ' + JSON.stringify(urls));
+			 }
+			if (url !== undefined)
+				linksArray.push(url);*/
+		});
 
 		// for(var i in allImgs){
 
 		// } cheerio.load(fs.readFileSync('path/to/file.html'));
 
-		
+
 		request(fs.readFileSync(direccionLocal + 'search000d.html'), function(err, resp, body) {
-		//	console.log('resp ' + JSON.stringify(resp.statusCode));
+			//	console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
 				//console.log('body ' + JSON.stringify(body));
@@ -96,8 +96,8 @@ module.exports = {
 						linksArray.push(url);*/
 				});
 			} else {
-			  console.log('error en la descarga');
-			}//console.log(linksArray);//return
+				console.log('error en la descarga');
+			} //console.log(linksArray);//return
 
 		});
 		return res.view('procuraduria');
@@ -106,8 +106,19 @@ module.exports = {
 
 	recogerTodo: function(req, res) {
 
-		
-	}
-	
-};
+		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co', {
+			followLinks: false
+		});
 
+		walker.on('file', function(root, stat, next) {
+			// Add this file to the list of files
+			files.push(root + '/' + stat.name);
+			next();
+		});
+
+		walker.on('end', function() {
+			console.log(files);
+		});
+	}
+
+};
