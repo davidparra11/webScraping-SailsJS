@@ -24,8 +24,8 @@ var Xray = require('x-ray');
 var x = Xray();
 
 var walk = require('walk');
-var files = [];
-
+var filesArray = [];
+var linkPersonasArray = [];
 
 var phantom = require('phantom');
 
@@ -38,16 +38,11 @@ module.exports = {
 
 		var $ = cheerio.load(fs.readFileSync('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/search000d.html'));
 
-		$('b').each(function() {
-			//var url =  $(this).attr('href');
-			var url = $(this).text();
+		$('a[ctype=c]').each(function() {
+			var url = $(this).attr('href');
+			//var url = $(this).text();  $('b')
 			console.log('Texto: ' + JSON.stringify(url));
-			/*if(url.indexOf('i.imgur.com')!= -1){
-			 urls.push(url);
-			 console.log('URLS ' + JSON.stringify(urls));
-			 }
-			if (url !== undefined)
-				linksArray.push(url);*/
+
 		});
 
 		// for(var i in allImgs){
@@ -131,28 +126,80 @@ module.exports = {
 	},
 
 	descargaPdf: function(req, res) {
+		console.log('hola mundo');
 
-		/*	var $ = cheerio.load(fs.readFileSync('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/search000d.html'));
 
-			
-			doc.text(20, 20, 'Hello world.');
-			doc.save('Test.pdf');*/
+		/*
+				phantom.create().then(function(ph) {
+					ph.createPage().then(function(page) {
+						page.open("http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view").then(function(status) {
+							console.log('Estatus: ' + status);
+							page.render('./pdfs/JOSE_JESUS_C.pdf').then(function() {
+								 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
+								console.log('Page Rendered');
 
-		phantom.create().then(function(ph) {
-			ph.createPage().then(function(page) {
-				page.open("http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view").then(function(status) {
-					console.log('Estatus: ' + status);
-					page.render('./pdfs/JOSE_JESUS_C.pdf').then(function() {
-						 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
-						console.log('Page Rendered');
-
-						//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
-						//wstream.write(data);
-						ph.exit();
+								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
+								//wstream.write(data);
+								ph.exit();
+							});
+						});
 					});
 				});
-			});
+		*/
+
+		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', {//busquedas.dafp.gov.co
+			followLinks: false
 		});
+
+		walker.on('file', function(root, stat, next) {
+			// Add this file to the list of files
+			filesArray.push(root + '/' + stat.name);
+			next();
+		});
+
+		/*walker.on('end', function() {
+			console.log(files);
+		});*/
+
+		
+		for (var llaveFiles in filesArray) {
+
+			var $ = cheerio.load(fs.readFileSync(filesArray[llaveFiles]));
+
+			$('a[ctype=c]').each(function() {
+				var url = $(this).attr('href');
+				//var url = $(this).text();  $('b')
+				//console.log('Texto: ' + JSON.stringify(url));  
+				linkPersonasArray.push(url);
+
+			});
+			//console.log(linkPersonasArray);
+			console.log(linkPersonasArray);
+
+		}
+
+		for (var llavePersonas in linkPersonasArray) {
+			console.log(linkPersonasArray);
+			phantom.create().then(function(ph) {
+					ph.createPage().then(function(page) {
+						page.open(linkPersonasArray[llavePersonas]).then(function(status) {
+							console.log('Estatus: ' + status);
+							page.render('./pdfs/' + linkPersonasArray[llavePersonas] + '.pdf').then(function() {
+								 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
+								console.log('Page Rendered');
+
+								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
+								//wstream.write(data);
+								ph.exit();
+							});
+						});
+					});
+				});
+
+		}
+
+		return res.view('procuraduria');
+
 
 
 	}

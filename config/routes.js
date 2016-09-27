@@ -63,7 +63,7 @@ module.exports.routes = {
   //Obtener todos los archivo de la ruta.
   'GET /archivosContraloria': 'PersonasController.recogerTodo',
   //Método que desglosa los archivo html individualmente .descargaPdf
-  'GET /individualContraloria': 'PersonasController.recogerTodo',
+  'GET /individualContraloria': 'PersonasController.individualContraloria',
   //Método que descarga un archivo pfd para  .
   'GET /descargaPdf': 'PersonasController.descargaPdf'
 
