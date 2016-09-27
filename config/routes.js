@@ -58,7 +58,9 @@ module.exports.routes = {
   'GET /individual2011': 'BoletinController.individual2011',
 
 
-  // El método realiza un análisis en los archivos locales de la Contraloría
-  'GET /': 'PersonasController.find'
+  // El método realiza un análisis en los archivos locales de la Contraloría. 
+  'GET /contraloria': 'PersonasController.analizar',
+  //Obtener todos los archivo de la ruta.
+  'GET /contraloria': 'PersonasController.recogerTodo'
 
 };
