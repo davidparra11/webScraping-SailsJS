@@ -106,6 +106,12 @@ module.exports = {
 		});
 	},
 
+	generarHtml: function(req, res) {
+
+		request('http://www.sigep.gov.co/hdv/-/directorio/M1846088-4714-4/view').pipe(fs.createWriteStream('./htmls/PruebaProcu.html'));
+		return res.view('contraloria');
+	},
+
 	individualContraloria: function(req, res) {
 
 		var $ = cheerio.load(fs.readFileSync('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/search000d.html'));
@@ -140,8 +146,6 @@ module.exports = {
 			if (url !== undefined)
 				linksArray.push(url);*/
 		});
-
-
 
 	},
 
@@ -193,6 +197,8 @@ module.exports = {
 				//var url = $(this).text();  $('b')
 				//console.log('Texto: ' + JSON.stringify(url));  
 				//linkPersonasArray.push(url);
+
+				request(url).pipe(fs.createWriteStream('./htmls/' + nombre + '.html'));
 				
 
 
