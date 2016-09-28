@@ -14,7 +14,7 @@ var request = require('request'),
 	year = 2010,
 	dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
 	direccionWebContraloria = 'http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view',
-
+	Regex = require("regex"),
 	linksArray = [],
 	utils = require('../utlities/Util');
 
@@ -122,10 +122,33 @@ module.exports = {
 				linksArray.push(url);*/
 		});
 
+		$('a[ctype=c]').each(function() {
+			//var url =  $(this).attr('href');
+			var url = $(this).text().toString();
+			var nombre = url.replace(/\t/g, "")
+				.replace(/\n/g, "")
+				.trim()
+				.replace(/ /g, '_'); //.replace("/\n/gi,", ".")  [a-zA-Z]+
+			var nombreUno;
+
+			console.log('Nombre replace: ' + nombre);
+
+			/*if(url.indexOf('i.imgur.com')!= -1){
+			 urls.push(url);
+			 console.log('URLS ' + JSON.stringify(urls));
+			 }
+			if (url !== undefined)
+				linksArray.push(url);*/
+		});
+
+
 
 	},
 
 	descargaPdf: function(req, res) {
+
+
+		//var test = function(){
 		console.log('hola mundo');
 
 
@@ -147,22 +170,66 @@ module.exports = {
 				});
 		*/
 
-		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', {//busquedas.dafp.gov.co
+		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', { //busquedas.dafp.gov.co
 			followLinks: false
 		});
+		var i = 1 ;
 
 		walker.on('file', function(root, stat, next) {
+			console.log('hola mundo insade');
 			// Add this file to the list of files
-			filesArray.push(root + '/' + stat.name);
+			//filesArray.push(root + '/' + stat.name);
+			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
+
+			$('a[ctype=c]').each(function() {
+				var url = $(this).attr('href');
+				//var nombre = $(this).text();
+				var testNombre = 'test';
+				var nombreUno = $(this).text().toString();
+				var nombre = nombreUno.replace(/\t/g, "")
+					.replace(/\n/g, "")
+					.trim()
+					.replace(/ /g, '_'); //.replace("/\n/gi,", ".")  [a-zA-Z]+
+				//var url = $(this).text();  $('b')
+				//console.log('Texto: ' + JSON.stringify(url));  
+				//linkPersonasArray.push(url);
+				
+
+
+				phantom.create().then(function(ph) {
+					ph.createPage().then(function(page) {
+						page.open(url).then(function(status) {
+							console.log('Estatus: ' + JSON.stringify(status));
+							page.render('./pdfs/' + nombre + '.pdf').then(function() {
+								//status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
+								console.log('Page Rendered');
+								i++;
+
+								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
+								//wstream.write(data);
+								ph.exit();
+							});
+						});
+					});
+				});
+
+			});
+
+
+
 			next();
 		});
+
+
 
 		/*walker.on('end', function() {
 			console.log(files);
 		});*/
 
-		
-		for (var llaveFiles in filesArray) {
+
+		/*for (var llaveFiles in filesArray) {
+
+			console.log(llaveFiles);
 
 			var $ = cheerio.load(fs.readFileSync(filesArray[llaveFiles]));
 
@@ -170,7 +237,10 @@ module.exports = {
 				var url = $(this).attr('href');
 				//var url = $(this).text();  $('b')
 				//console.log('Texto: ' + JSON.stringify(url));  
-				linkPersonasArray.push(url);
+				//linkPersonasArray.push(url);
+
+
+				
 
 			});
 			//console.log(linkPersonasArray);
@@ -182,7 +252,7 @@ module.exports = {
 			console.log(linkPersonasArray);
 			phantom.create().then(function(ph) {
 					ph.createPage().then(function(page) {
-						page.open(linkPersonasArray[llavePersonas]).then(function(status) {
+						page.open(filesArray[llavePersonas]).then(function(status) {
 							console.log('Estatus: ' + status);
 							page.render('./pdfs/' + linkPersonasArray[llavePersonas] + '.pdf').then(function() {
 								 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
@@ -196,10 +266,14 @@ module.exports = {
 					});
 				});
 
-		}
+		}*/
+
+		//}fin de la funcion
+
+
 
 		return res.view('procuraduria');
-
+		//test();
 
 
 	}
