@@ -108,7 +108,7 @@ module.exports = {
        
     },
 
-    agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha) {    	
+    agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha , fuente) {    	
 
 				var x = {
 					titulo: titulo,
@@ -116,7 +116,7 @@ module.exports = {
 					textoCompleto: textoCompletoUno,
 					textoUnoDos: textoUnoDos,
 					fecha: fecha,
-					fuente: 'no aplica'
+					fuente: fuente
 				};
 
 				boletinArray.length = 0;

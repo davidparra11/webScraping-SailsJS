@@ -7,7 +7,6 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=11&wpgn=null&max_results=1000&first_result=0',
 	dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	Regex = require("regex"),
 	regex = new Regex(/(a|b)*abb/),
@@ -25,6 +24,8 @@ var request = require('request'),
 
 const util = require('util');
 
+var Globalize = require("globalize");
+
 var Xray = require('x-ray');
 var x = Xray();
 
@@ -32,7 +33,22 @@ var parrafo;
 
 var htmlToText = require('html-to-text');
 
-var parra = [];
+
+
+var month = new Array();
+month[0] = "Jan";
+month[1] = "Feb";
+month[2] = "Mar";
+month[3] = "Apr";
+month[4] = "May";
+month[5] = "Jun";
+month[6] = "Jul";
+month[7] = "Aug";
+month[8] = "Sep";
+month[9] = "Oct";
+month[10] = "Nov";
+month[11] = "Dec";
+
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
 module.exports = {
@@ -40,109 +56,135 @@ module.exports = {
 	/**
 	 * método que hace la búsqueda y recopilación a los boletines despúes del 2010 de la procuraduria.
 	 */
-
 	find: function(req, res) {
 
 		console.log('Recurso para tomar datos del 2011 hacia adelante.');
 
-		// for(var i in allImgs){
+		if (!req.param("category")) {
+			return res.send(400, "el valor de 'category' no se ha introducido.");
+		}
 
-		// }
+		contador = 1;
+		arreglo = [];
 
-		
-		request(direccionWeb, function(err, resp, body) {
-			console.log('resp ' + JSON.stringify(resp.statusCode));
 
-			if (!err && resp.statusCode == 200) {
-				//console.log('body ' + JSON.stringify(body));
-				var $ = cheerio.load(body);
-				console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
 
-				/*$('a.news-list-title').each(function() {
-					//var url =  $(this).attr('href');
-					var url = $(this).text();
-				//	console.log('Texto: ' + JSON.stringify(url));
-					/*if(url.indexOf('i.imgur.com')!= -1){
-					 urls.push(url);
-					 console.log('URLS ' + JSON.stringify(urls));
-					 }
+		// variable para seleccionar el año en el paginador despues del 2010.
+		var category = req.param('category');
+		for (var key in onceArray) {
+			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=25&first_result=0';
 
-				});*/
+			request(direccionWeb, function(err, resp, body) {
+				console.log('resp ' + JSON.stringify(resp.statusCode));
 
-				$('a.news-list-title').each(function() {
-					//var url =  $(this).attr('href');
-					var url = $(this).attr('href');
-					//console.log('Texto: ' + JSON.stringify(url));
-					/*if(url.indexOf('i.imgur.com')!= -1){
-					 urls.push(url);
-					 console.log('URLS ' + JSON.stringify(urls));
-					 }*/
-					if (url !== undefined)
-						linksArray.push(url);
-				});
-			} //console.log(linksArray);//return
+				if (!err && resp.statusCode == 200) {
+					//console.log('body ' + JSON.stringify(body));
+					var $ = cheerio.load(body);
+					console.log('$ ' + JSON.stringify($));
 
-			for (var llaveLink in linksArray) {
-				request('http://www.procuraduria.gov.co/portal/' + linksArray[llaveLink], function(err, resp, body) {
-					//console.log('resp ' + JSON.stringify(resp.statusCode));
+					$('a.news-list-title').each(function() {
 
-					if (!err && resp.statusCode == 200) {
-						//console.log('body ' + JSON.stringify(body));
+						var url = $(this).attr('href');
+						if (url === undefined)
+							return;
 
-						var $ = cheerio.load(body);
-						//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
+						console.log('URL: ' + JSON.stringify(url));
+						arreglo.push(url);
 
-						var fecha = "";
+						request('http://www.procuraduria.gov.co/portal/' + url, function(err, resp, body) {
+							if (!err && resp.statusCode == 200) {
+								var $ = cheerio.load(body);
+								var fecha = "";
+								var texto = "";
+								var boletin = "";
+								var titulo = "";
+								var fuente = "";
 
-						//texto
-						$('p.MsoNormal').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							console.log('Texto: ' + JSON.stringify(datos));
-							//boletinArray.push(datos);
+								//texto
+								$('p.MsoNormal').each(function() {
+									//var url =  $(this).attr('href');
+									var texto = $(this).last().text();
+									//console.log('Texto: ' + JSON.stringify(texto));
+
+									//boletinArray.push(texto);
+								});
+
+								if (texto === undefined || texto == "") {
+									$('div[align=justify]').each(function() {
+										//var url =  $(this).attr('href');
+										var datos = $(this).last().text();
+										//console.log('Texto: ' + JSON.stringify(datos));
+										boletinArray.push(datos);
+										texto = datos.trim();
+									});
+
+									// bloque de variables para seleccionar las partes del html.
+
+									//var texto = boletinArray.slice(0, 4).toString(); //boletinArray.slice(4, 8).toString()
+									//texto = "falta";justifya[aling=justify]
+
+								}
+
+								//console.log('Texto: ' + JSON.stringify(texto));
+
+
+
+								//titulo
+								$('h2.prueba').each(function() {
+									//var url =  $(this).attr('href');
+									titulo = $(this).last().text().toString();
+									//console.log('Tituto: ' + JSON.stringify(titulo));
+									//boletinArray.push(titulo);
+
+								});
+
+								//boletin
+								$('h3.news-view-subtitle').each(function() {
+									//var url =  $(this).attr('href');
+									boletin = $(this).last().text().toString();
+									//	console.log('Boletin: ' + JSON.stringify(boletin));
+									//	boletinArray.push(boletin);
+
+								});
+
+								//fecha
+								$('h4').each(function() {
+									//var url =  $(this).attr('href');
+									//fecha = $(this).last().text().toString();
+									//	console.log('Fecha: ' + JSON.stringify(fecha));
+									//boletinArray.push(fecha);
+									//var url =  $(this).attr('href');
+									var datos = $(this).last().text();
+									//console.log('Fecha: ' + JSON.stringify(datos));
+									//boletinArray.push(datos);
+									var pos = datos.indexOf("n:");
+									fecha = datos.slice(pos + 2);
+
+									var posIni = datos.indexOf(":");
+									var posDos = datos.indexOf("Fecha");
+									fuente = datos.slice(posIni + 1, posDos);
+
+
+								});
+
+
+
+								utils.agregarToDB(boletin, titulo, texto, texto, fecha, fuente);
+
+								boletinArray.length = 0;
+
+							} else {
+								console.log('hubo problemas con: ' + url);
+								return true;
+							}
 
 						});
-						//titulo
-						$('h2.prueba').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							//+ console.log('Tituto: ' + JSON.stringify(datos));
-							//boletinArray.push(datos);
 
-						});
+					});
+				} //console.log(linksArray);//return
+			});
 
-						//boletin
-
-						$('h3.news-view-subtitle').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							//	console.log('Boletin: ' + JSON.stringify(datos));
-							//	boletinArray.push(datos);
-
-						});
-
-						//fecha
-
-						$('h4').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							//	console.log('Fecha: ' + JSON.stringify(datos));
-							//boletinArray.push(datos);
-
-						});
-
-						//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);*/
-
-						boletinArray.length = 0;
-
-					} else {
-						console.log('hubo problemas con: ' + linksArray[llaveLink])
-						return true;
-					}
-
-				});
-			}
-		});
+		}
 		return res.view('procuraduria');
 
 	},
@@ -150,7 +192,7 @@ module.exports = {
 
 	findOld: function(req, res) {
 
-		console.log('Recurso para tomar datos del 2010 hacia atrás ');
+		console.log('Recurso para tomar datos del 2010 hacia atrás.');
 
 		var boletinesFalsos = [];
 
@@ -324,40 +366,41 @@ module.exports = {
 
 	},
 
-
+	/**
+	 * Analiza un boteletin en específico para los años 2010 y anteriores.
+	 */
 	individual: function(req, res) {
 
-		var numBoletin = req.param("boletin");
+		if (!req.param("boletin")) {
+			return res.send(400, "el valor de 'boletin' no se ha introducido.");
+		}
 
-		console.log('find function ');
-		request('http://www.procuraduria.gov.co/html/noticias_2010/noticias_' + numBoletin + '.htm', function(err, resp, body) {
+		console.log('se inició la funcion para analizr los boletines del 2010 hacia atrás. ');
+		var numBoletin = req.param("boletin");
+		// el valor del año para este metodo tiene un intervalo cerrado entre 2004 y 2010.
+		var year = '2010';
+
+		//El modulo cheerio carga el html de la peticion para disgregar los 
+		//elementos por eiquetas; se puede observar los datos por separado con los consol.log();
+		request('http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_' + numBoletin + '.htm', function(err, resp, body) {
 			console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
-				//console.log('body ' + JSON.stringify(body));
-
 				var $ = cheerio.load(body);
-				//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
-
 				var fecha = "";
-
-
+				//se recueran las etiquetas p del DOM html.
 				$('p').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
 					console.log('Texto: ' + JSON.stringify(datos));
 					boletinArray.push(datos);
-
 				});
 
-
-
+				// bloque de variables para seleccionar las partes del html.
 				var finalParrafo = boletinArray.length - 1;
-
 				var boletin = boletinArray.slice(0, 1).toString();
 				var titulo = boletinArray.slice(1, 2).toString();
 				var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-
 				var textoUnoDos = boletinArray.slice(4, 6).toString();
 
 
@@ -366,21 +409,16 @@ module.exports = {
 					var datoFecha = $(this).text();
 					console.log('Fecha: ' + JSON.stringify(datoFecha));
 					fecha = datoFecha;
-
-
 				});
 
-				console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
+				//console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
 				console.log('boletin: ' + JSON.stringify(boletin));
 				console.log('Titulo: ' + JSON.stringify(titulo));
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
 				console.log('Texto1y2: ' + textoUnoDos);
 
-				console.log('Long boletin: ' + JSON.stringify(boletin.length));
-				console.log('Long Titulo: ' + JSON.stringify(titulo.length));
-				console.log('Long TextoCompletoUno: ' + textoCompletoUno.length);
-				console.log('Long Texto1y2: ' + textoUnoDos.length);
 
+				//funcion para grabar los datos en DB.
 				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 
 				boletinArray.length = 0;
@@ -393,31 +431,72 @@ module.exports = {
 
 	},
 
+
+	/**
+	 * Analiza un boteletin en específico para los años 2011 y posteriores.
+	 */
 	individual2011: function(req, res) {
 
-		var direccion = req.param("direccion");
+
+		var Globalize = require("globalize");
+		Globalize.load(require("cldr-data").entireSupplemental());
+		Globalize.load(require("cldr-data").entireMainFor("en", "es"));
 
 
-		console.log('find function ');
-		request('http://www.procuraduria.gov.co/portal/' + direccion, function(err, resp, body) {
-			console.log('resp ' + JSON.stringify(resp.statusCode));
+		var moment = require('moment');
+		var now = moment();
+
+		var testDate = require('date-utils').language("es");
+
+		if (!req.param("tituloUrl")) {
+			return res.send(400, "el valor de 'tituloUrl' no se ha introducido.");
+		}
+
+		console.log('Se inició el recurso para tomar datos de un boteltin individual del 2011 y posteriores.');
+		var tituloUrl = req.param("tituloUrl");
+
+		//La funcion lanza la peticion a la direccion definida y toma diferentes
+		//etiquetas del DOM.
+		request('http://www.procuraduria.gov.co/portal/' + tituloUrl, function(err, resp, body) {
+			console.log('RespuestaServidor: ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
-				//console.log('body ' + JSON.stringify(body));
-
 				var $ = cheerio.load(body);
 				//console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
 
 				var fecha = "";
+				var texto = "";
+				var boletin = "";
+				var titulo = "";
+				var fuente = "";
 
 				//texto
 				$('p.MsoNormal').each(function() {
 					//var url =  $(this).attr('href');
-					var datos = $(this).last().text();
-					console.log('Texto: ' + JSON.stringify(datos));
+					texto = $(this).last().text();
+
 					//boletinArray.push(datos);
 
 				});
+
+				if (texto === undefined || texto == "") {
+					$('div[align=justify]').each(function() {
+						//var url =  $(this).attr('href');
+						var datos = $(this).last().text();
+						console.log('Texto: ' + JSON.stringify(datos));
+						boletinArray.push(datos);
+						texto = datos;
+					});
+
+					// bloque de variables para seleccionar las partes del html.
+
+					//var texto = boletinArray.slice(0, 4).toString(); //boletinArray.slice(4, 8).toString()
+					//texto = "falta";justifya[aling=justify]
+
+				}
+
+				console.log('Texto: ' + JSON.stringify(texto));
+
 				//titulo
 				$('h2.prueba').each(function() {
 					//var url =  $(this).attr('href');
@@ -428,7 +507,6 @@ module.exports = {
 				});
 
 				//boletin
-
 				$('h3.news-view-subtitle').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
@@ -437,50 +515,64 @@ module.exports = {
 
 				});
 
-				//fecha
-
+				//fecha y fuente
 				$('h4').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('Fecha: ' + JSON.stringify(datos));
-					//boletinArray.push(datos);
+
+
+					var pos = datos.indexOf("n:");
+					var fechaSinFiltro = datos.slice(pos + 2);
+
+					var posIni = datos.indexOf(":");
+					var posDos = datos.indexOf("Fecha");
+					fuente = datos.slice(posIni + 1, posDos);
+
+					var posTres = fechaSinFiltro.indexOf(",");
+
+
+					var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
+					var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+
+					var result = fechaSinFormato.match(patt1);
+					console.log('Result: ' + result);
+					//var result2 = result.toLocaleLowerCase();
+					var mes = Date.getMonthNumberFromName(result.toString().trim());
+					var mesNombre = month[mes];
+
+					var fechaSinMes = fechaSinFormato.replace(result, "");
+
+					fecha = mesNombre + ' ' + fechaSinMes;
 
 				});
 
+				console.log('FECHAs: ' + fecha);
+				console.log('FECHA UTV: ' + Date.parse(fecha));
 
+				//dddd, mmmm dS, yyyy, h:MM:ss TT
+				/*var dateString = "29 de agosto de 2011";
+				// seems like long date format in Spanish
+				//var dates = Globalize.dateParser()(fecha);
+				var dates = moment(dateString, "MM-DD-YYYY");
+				//var dateDos = testDate(dateString);getDayNumberFromName(day),  
+				var today = Date.parse(fecha, "YYYY-MM-DDTHH:MM:SS");
+				var mes = Date.getMonthNumberFromName('febrero');
+				var numMes = Date.getMonthNameFromNumber(mes);
 
-				/*var finalParrafo = boletinArray.length - 1;
+				console.log('MES: ' + mes.getMonthAbbr() + 'numMes: ' + numMes);
+				//console.log('DATE: ' + dates);
 
-				var boletin = boletinArray.slice(0, 1).toString();
-				var titulo = boletinArray.slice(1, 2).toString();
-				var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-
-				var textoUnoDos = boletinArray.slice(4, 6).toString();
-
-
-				//se implementa para sacar la fecha del archivo html.			
-				$('span.textopeq').each(function() {
-					var datoFecha = $(this).text();
-					console.log('Fecha: ' + JSON.stringify(datoFecha));
-					fecha = datoFecha;
-
-
-				});
-
-				console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
-				console.log('boletin: ' + JSON.stringify(boletin));
-				console.log('Titulo: ' + JSON.stringify(titulo));
-				console.log('TextoCompletoUno: ' + textoCompletoUno);
-				console.log('Texto1y2: ' + textoUnoDos);
-
-				console.log('Long boletin: ' + JSON.stringify(boletin.length));
-				console.log('Long Titulo: ' + JSON.stringify(titulo.length));
-				console.log('Long TextoCompletoUno: ' + textoCompletoUno.length);
-				console.log('Long Texto1y2: ' + textoUnoDos.length);
-
-				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);*/
-
+				console.log('DATE: ' + today + 'fecha; ' + fecha);
+				console.log('DATE: ' + JSON.stringify(Date.getDayNumberFromName('monday')));*/
+				//Método para agregar las variables a la DB.
+				//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);.dateParser()( "11/30/2010" )
 				boletinArray.length = 0;
+
+				console.log('Globalize: ' + Globalize("es").formatDate(new Date()));
+
+				// > "11/27/2015"
+
+
 
 			}
 
