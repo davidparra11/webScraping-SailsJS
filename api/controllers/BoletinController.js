@@ -14,7 +14,7 @@ var request = require('request'),
 	boletinArrayHtml = [],
 	urls = [],
 	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
+	cantBoletinesArray = [32, 33, 34, 35, 36, 37, 38],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
@@ -355,12 +355,19 @@ module.exports = {
 					var result = fechaSinFormato.match(patt1);
 					console.log('Result: ' + result);
 					//var result2 = result.toLocaleLowerCase();
+					if (result === null)
+						result = 'enero';
+
 					var mes = Date.getMonthNumberFromName(result.toString().trim());
 					var mesNombre = month[mes];
 
-					var fechaSinMes = fechaSinFormato.replace(result, "");
 
-					fechaCodificada = mesNombre + ' ' + fechaSinMes;
+
+					var fechaSinMes = fechaSinFormato.replace(result, "");
+					var fechaSinCodificacion = mesNombre + ' ' + fechaSinMes;
+					fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
+
+					fechaCodificada = Date.parse(fechaSinCodificacion);
 					/*
 
 						var inicioFecha = textoCompletoUno.toString().indexOf(",");//indexOf es mas rapido. que search func.
@@ -381,7 +388,7 @@ module.exports = {
 					//console.log('Texto1y2: ' + textoUnoDos);
 
 					//boletinArray.length = 0;
-					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'fuente');
+					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'Procuraduria');
 					boletinArray.length = 0;
 					//return true;
 					//i++;
@@ -414,6 +421,7 @@ module.exports = {
 			return res.send(400, "el valor de 'boletin' no se ha introducido.");
 		}
 
+		var testDate = require('date-utils').language("es");
 		console.log('se inició la funcion para analizr los boletines del 2010 hacia atrás. ');
 		var numBoletin = req.param("boletin");
 		// el valor del año para este metodo tiene un intervalo cerrado entre 2004 y 2010.
@@ -478,14 +486,17 @@ module.exports = {
 				var mesNombre = month[mes];
 
 				var fechaSinMes = fechaSinFormato.replace(result, "");
+				var fechaSinCodificacion = mesNombre + ' ' + fechaSinMes;
+				fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
 
-				fechaCodificada = mesNombre + ' ' + fechaSinMes;
+				fechaCodificada = Date.parse(fechaSinCodificacion);
 
 				//console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
 				console.log('boletin: ' + JSON.stringify(boletin));
 				console.log('Titulo: ' + JSON.stringify(titulo));
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
 				console.log('Texto1y2: ' + textoUnoDos);
+				console.log('Fecha sin codificacion: ' + fechaSinCodificacion);
 				console.log('fechaCodificada: ' + fechaCodificada);
 
 

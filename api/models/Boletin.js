@@ -21,7 +21,8 @@ module.exports = {
             type: 'string'
         },
         boletin: {
-            type: 'string'
+            type: 'string',
+            size: 100
         },
         textoCompleto: {
             type: 'string',
@@ -29,7 +30,7 @@ module.exports = {
         },
         textoUnoDos: {
             type: 'string',
-            size: 5000
+            size: 4000
         },
         fuente: {
             type: 'string'
@@ -40,11 +41,13 @@ module.exports = {
         urlWeb: {
             type: 'string'
         },
-        dirLocalHtml: {
-            type: 'string'
+        localPdf: {
+            type: 'string',
+            size: 120
         },
-        dirLocalPdf: {
-            type: 'string'
+        localHtml: {
+            type: 'string',
+            size: 120
         },
         creationDate: {
 	        columnName: 'cre_dt',
