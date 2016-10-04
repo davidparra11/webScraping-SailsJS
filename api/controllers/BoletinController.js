@@ -307,7 +307,7 @@ module.exports = {
 					//bloque para filtrar todo el texto completo del boletin.
 					if (boletinArray[1].toString().length > 99) {
 						var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
-						textoCompletoUno =textoCompletoUnoAnterior.toString().trim()
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim()
 
 					} else if (boletinArray[2].toString().length > 99) {
 						var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
@@ -427,6 +427,7 @@ module.exports = {
 			if (!err && resp.statusCode == 200) {
 				var $ = cheerio.load(body);
 				var fecha = "";
+				var fechaCodificada = "";
 				//se recueran las etiquetas p del DOM html.
 				$('p').each(function() {
 					//var url =  $(this).attr('href');
@@ -464,15 +465,32 @@ module.exports = {
 					fecha = datoFecha;
 				});
 
+
+				var posTres = fecha.indexOf(",");
+
+				var fechaSinFormato = fecha.slice(posTres + 1);
+				var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+
+				var result = fechaSinFormato.match(patt1);
+				console.log('Result: ' + result);
+				//var result2 = result.toLocaleLowerCase();
+				var mes = Date.getMonthNumberFromName(result.toString().trim());
+				var mesNombre = month[mes];
+
+				var fechaSinMes = fechaSinFormato.replace(result, "");
+
+				fechaCodificada = mesNombre + ' ' + fechaSinMes;
+
 				//console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
 				console.log('boletin: ' + JSON.stringify(boletin));
 				console.log('Titulo: ' + JSON.stringify(titulo));
 				console.log('TextoCompletoUno: ' + textoCompletoUno);
 				console.log('Texto1y2: ' + textoUnoDos);
+				console.log('fechaCodificada: ' + fechaCodificada);
 
 
 				//funcion para grabar los datos en DB.
-				utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+				//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 
 				boletinArray.length = 0;
 
