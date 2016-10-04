@@ -48,13 +48,13 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
-  // El método realiza el análisi a los boletines de la procuradura del 2011 y después.
+  // El método realiza el análisis a los boletines de la procuradura del 2011 y después.
   'GET /boletin': 'BoletinController.find',
-  // El método realiza el análisi a los boletines de la procuradura del 2010 y antes.
+  // El método realiza el análisis a los boletines de la procuradura del 2010 y antes.
   'GET /boletin2010': 'BoletinController.findOld',
-  // El método realiza el análisi a el boletin del 2010 o antes entrado como parametro GET .
+  // El método realiza el análisis a el boletin del 2010 o antes entrado como parametro GET .
   'GET /individual': 'BoletinController.individual',
-  // El método realiza el análisi a los boletin del 2011 o después entrado como parametro.
+  // El método realiza el análisis a los boletin del 2011 o después entrado como parametro.
   'GET /individual2011': 'BoletinController.individual2011',
 
 
