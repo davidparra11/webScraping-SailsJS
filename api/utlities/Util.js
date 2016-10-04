@@ -126,7 +126,7 @@ module.exports = {
 					//console.log(boletin);
 					if (error) {
 						console.log('error DB');
-						//return true;
+						return true;
 					} else {						
 						console.log('OK');
 						return true;
