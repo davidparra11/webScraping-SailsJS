@@ -14,7 +14,7 @@ var request = require('request'),
 	boletinArrayHtml = [],
 	urls = [],
 	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [32, 33, 34, 35, 36, 37, 38],
+	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
@@ -36,6 +36,8 @@ var htmlToText = require('html-to-text');
 
 var iconv = require('iconv-lite');
 var y = 0;
+
+var phantom = require('phantom');
 
 
 
@@ -389,6 +391,24 @@ module.exports = {
 
 					//boletinArray.length = 0;
 					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'Procuraduria');
+					request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + fechaCodificada + '.html'));
+
+					phantom.create().then(function(ph) {
+						ph.createPage().then(function(page) {
+							page.open(dirInterna).then(function(status) {
+								console.log('Estatus: ' + JSON.stringify(status));
+								page.render('./pdfBoletines/' + fechaCodificada + '.pdf').then(function() {
+									//status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
+									console.log('Page Rendered');
+									i++;
+
+									//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
+									//wstream.write(data);
+									ph.exit();
+								});
+							});
+						});
+					});
 					boletinArray.length = 0;
 					//return true;
 					//i++;
@@ -502,6 +522,7 @@ module.exports = {
 
 				//funcion para grabar los datos en DB.
 				//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+
 
 				boletinArray.length = 0;
 

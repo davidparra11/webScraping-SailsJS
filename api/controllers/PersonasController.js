@@ -32,6 +32,7 @@ var phantom = require('phantom');
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
 module.exports = {
+	//para analizar los archivos locales descargados de la Contraloria (de manera individual)
 	analizar: function(req, res) {
 
 		console.log('Analizar datos de la Contraloria.');
@@ -88,7 +89,7 @@ module.exports = {
 		return res.view('procuraduria');
 
 	},
-
+	//recorrer los archivos descargados en la ruta local
 	recogerTodo: function(req, res) {
 
 		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co', {
