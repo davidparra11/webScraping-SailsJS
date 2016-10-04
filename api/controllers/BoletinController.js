@@ -184,6 +184,12 @@ module.exports = {
 		console.log('Recurso para tomar datos del 2010 hacia atrás.');
 
 
+		var moment = require('moment');
+		var now = moment();
+
+		var testDate = require('date-utils').language("es");
+
+
 
 		var boletinesFalsos = [];
 
@@ -241,6 +247,7 @@ module.exports = {
 
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(body);
+					fechaCodificada = '';
 					fecha = '';
 
 					$('p').each(function() {
@@ -311,7 +318,7 @@ module.exports = {
 						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
 						if (boletinArray[2].toString().length < 99)
 							var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
-							textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
 
 					}
 
@@ -337,6 +344,23 @@ module.exports = {
 						fecha = textoCompletoUno.toString().slice(0, 30).trim();
 
 					}
+
+
+
+					var posTres = fecha.indexOf(",");
+
+					var fechaSinFormato = fecha.slice(posTres + 1);
+					var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+
+					var result = fechaSinFormato.match(patt1);
+					console.log('Result: ' + result);
+					//var result2 = result.toLocaleLowerCase();
+					var mes = Date.getMonthNumberFromName(result.toString().trim());
+					var mesNombre = month[mes];
+
+					var fechaSinMes = fechaSinFormato.replace(result, "");
+
+					fechaCodificada = mesNombre + ' ' + fechaSinMes;
 					/*
 
 						var inicioFecha = textoCompletoUno.toString().indexOf(",");//indexOf es mas rapido. que search func.
@@ -353,11 +377,11 @@ module.exports = {
 					console.log('Boletin: ' + JSON.stringify(boletin));
 					//+console.log('Titulo: ' + JSON.stringify(titulo));
 					//console.log('TextoCompletoUno: ' + textoCompletoUno);
-					console.log('Fecha:::::::::::::  ' + fecha);
+					console.log('Fecha:::::::::::::  ' + fechaCodificada);
 					//console.log('Texto1y2: ' + textoUnoDos);
 
 					//boletinArray.length = 0;
-					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha, 'fuente');
+					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'fuente');
 					boletinArray.length = 0;
 					//return true;
 					//i++;

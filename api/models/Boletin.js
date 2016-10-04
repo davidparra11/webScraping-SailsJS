@@ -37,6 +37,15 @@ module.exports = {
         fecha: {
             type: 'string'
         },
+        urlWeb: {
+            type: 'string'
+        },
+        dirLocalHtml: {
+            type: 'string'
+        },
+        dirLocalPdf: {
+            type: 'string'
+        },
         creationDate: {
 	        columnName: 'cre_dt',
 	        type: 'datetime',
