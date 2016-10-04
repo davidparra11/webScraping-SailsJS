@@ -14,12 +14,12 @@ var request = require('request'),
 	boletinArrayHtml = [],
 	urls = [],
 	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [22, 22, 22, 22, 22, 22, 22],
+	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
 	year = 2010,
-	dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
+	//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
 	linksArray = [],
 	utils = require('../utlities/Util');
 
@@ -35,6 +35,7 @@ var parrafo;
 var htmlToText = require('html-to-text');
 
 var iconv = require('iconv-lite');
+var y = 0;
 
 
 
@@ -182,27 +183,61 @@ module.exports = {
 
 		console.log('Recurso para tomar datos del 2010 hacia atrás.');
 
+
+
 		var boletinesFalsos = [];
 
-		var i = 10;
-		var totContador = 920;
+		//var i = 1;
+		//var totContador = 920;
 		//bucleContador(i, totContador);
 
+		//for (var key in yearArray)
 
 
-		year = 2005;
+		bucleContador(cantBoletinesArray[y], y);
+		if (y > 6) {
+			return;
+		}
 
 
-		bucleContador(i, totContador);
+		function bucleContador(totContador, llave) {
 
-		function bucleContador(i, totContador) {
-			y = 120;
+			if (y > 6) {
+				return;
+			}
+			console.log('totContador: ' + totContador + 'llave: ' + llave);
+
 			if (i === undefined)
 				i = 1;
-			if (i >= totContador) return;
+			if (i >= totContador) {
+				i = 0;
+				y++;
+				console.log('Y: ' + y + 'llave: ' + llave + 'cantBoletinesArray: ' + cantBoletinesArray[y]);
+
+
+				bucleContador(cantBoletinesArray[y], y);
+
+			}
+			i++;
+			//console.log('hol mundo' + totContador + 'llave: ' + llave);
+			loopBoletin(i, llave);
+
+
+		}
+
+		function loopBoletin(i, llave) {
+
+
+			if (i < 10) {
+				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_00' + i + '.htm';
+			} else if (i > 9 && i < 100) {
+				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_0' + i + '.htm';
+			} else {
+				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_' + i + '.htm';
+			}
 
 			request(dirInterna, function(err, resp, body) {
-				i++;
+				//i++;
 
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(body);
@@ -238,21 +273,21 @@ module.exports = {
 						boletinesFalsos.push(i);*/
 
 					if (boletin.length == 31) {
-						boletin = boletin;
+						boletin = boletin.slice(20);
 					} else if (boletinArray[1].toString().length == 31) {
-						boletin = boletinArray[1].toString();
+						boletin = boletinArray[1].toString().slice(20);
 					} else {
 						$('td.marcogris2').each(function() {
 							var datoBoletin = $(this).text();
 							//+console.log('Boletin: ' + JSON.stringify(datoBoletin));
-							boletin = datoBoletin;
+							boletin = datoBoletin.slice(20);
 						});
 					}
 
 					if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
-						titulo = titulo;
+						titulo = titulo.trim();
 					} else if (boletinArray[0].length > 31) {
-						titulo = boletinArray[0].toString();
+						titulo = boletinArray[0].toString().trim();
 					} else {
 
 						//+	console.log('boletinArray[1].: ' + JSON.stringify(boletinArray[1]));
@@ -264,15 +299,19 @@ module.exports = {
 
 					//bloque para filtrar todo el texto completo del boletin.
 					if (boletinArray[1].toString().length > 99) {
-						textoCompletoUno = boletinArray.slice(1, finalParrafo);
+						var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
+						textoCompletoUno =textoCompletoUnoAnterior.toString().trim()
 
 					} else if (boletinArray[2].toString().length > 99) {
-						textoCompletoUno = boletinArray.slice(2, finalParrafo);
+						var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
 
 					} else {
-						textoCompletoUno = boletinArray.slice(3, finalParrafo);
+						var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
 						if (boletinArray[2].toString().length < 99)
-							textoCompletoUno = boletinArray.slice(4, finalParrafo);
+							var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
+							textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
 
 					}
 
@@ -280,7 +319,7 @@ module.exports = {
 						$('strong').each(function() {
 							var datoFecha = $(this).text();
 							console.log('Fecha STRONG : ' + JSON.stringify(datoFecha));
-							fecha = datoFecha;
+							fecha = datoFecha.trim();
 						});
 
 					}
@@ -295,7 +334,7 @@ module.exports = {
 
 						//*	console.log('Final:::::::::::::  ' + finalFecha);
 
-						fecha = textoCompletoUno.toString().slice(0, 30);
+						fecha = textoCompletoUno.toString().slice(0, 30).trim();
 
 					}
 					/*
@@ -310,56 +349,33 @@ module.exports = {
 */
 					//fecha = textoCompletoUno.slice(10, finalFecha).toString();
 
-					console.log('YEAR: ' + year + ' -i: ' + i + ' -y: ' + y);
+					console.log('YEAR: ' + yearArray[llave] + ' -i: ' + i + ' -y: ' + y);
 					console.log('Boletin: ' + JSON.stringify(boletin));
 					//+console.log('Titulo: ' + JSON.stringify(titulo));
 					//console.log('TextoCompletoUno: ' + textoCompletoUno);
 					console.log('Fecha:::::::::::::  ' + fecha);
 					//console.log('Texto1y2: ' + textoUnoDos);
-					var x = {
-						titulo: titulo,
-						boletin: boletin,
-						textoCompleto: textoCompletoUno, //'textoCompleto'   jsonString
-						textoUnoDos: textoUnoDos,
-						fecha: fecha,
-						fuente: 'no aplica'
-					};
+
 					//boletinArray.length = 0;
-					//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
+					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha, 'fuente');
 					boletinArray.length = 0;
 					//return true;
 					//i++;
-					if (i < 10) {
-						//year = 2004;
-						dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm';
-						bucleContador(i, y);
-					} else if (i > 9 && i < 100) {
-						//console.log('YEAR: '+ year + 'i: ' + i);
-						//year = 2004;
-						dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_0' + i + '.htm';
-						bucleContador(i, y);
-					} else {
-						//console.log('YEAR: '+ year + '@i: ' + i);
-						//year = 2004;
-						dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_' + i + '.htm';
-						bucleContador(i, y);
-					}
+
 
 				} else {
-					console.log('Hubo un error en la descarga de la página' + dirInterna + ' -i: ' + i);
-					dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_' + i + '.htm';
-					i++;
-					bucleContador(i, y);
+					console.log('Hubo un error en la descarga de la página: - ' + dirInterna + ' -i: ' + i);
+					//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[key] + '/noticias_' + i + '.htm';
+
 				}
 
 			});
-			/*request(dirInterna, function(err, resp, body) {
-				
-			});*/
-			console.log('Boletines Falsos' + JSON.stringify(boletinesFalsos));
+			bucleContador(cantBoletinesArray[y], y);
+
 		}
 
-		console.log("Boletines Falsos" + boletinesFalsos);
+
+		//console.log("Boletines Falsos" + boletinesFalsos);
 		return res.view('procuraduria2010');
 
 
@@ -461,7 +477,7 @@ module.exports = {
 			},
 			function(err, resp, body) {
 				var bodyWithCorrectEncoding = iconv.decode(body, 'iso-8859-1');
-				
+
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(bodyWithCorrectEncoding, {
 						decodeEntities: true
