@@ -51,7 +51,7 @@ module.exports.routes = {
   // El método realiza el análisis a los boletines de la procuradura del 2011 y después.
   'GET /boletinesNuevos': 'BoletinController.boletinesNuevos',
   // El método realiza el análisis a los boletines de la procuradura del 2010 y antes.
-  'GET /boletinesNuevos': 'BoletinController.boletinesAntiguos',
+  'GET /boletinesAntiguos': 'BoletinController.boletinesAntiguos',
   // El método realiza el análisis a el boletin del 2010 o antes entrado como parametro GET .
   'GET /individual': 'BoletinController.individual',
   // El método realiza el análisis a los boletin del 2011 o después entrado como parametro.

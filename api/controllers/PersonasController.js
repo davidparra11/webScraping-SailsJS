@@ -152,7 +152,7 @@ module.exports = {
 
 	descargaHtmls: function(req, res) {
 		//var test = function(){
-		console.log('hola mundo');
+		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
 
 		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', { //busquedas.dafp.gov.co
 			followLinks: false
@@ -160,8 +160,6 @@ module.exports = {
 		var i = 1;
 
 		walker.on('file', function(root, stat, next) {
-			console.log('hola mundo insade');
-			// Add this file to the list of files
 			//filesArray.push(root + '/' + stat.name);
 			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
 
