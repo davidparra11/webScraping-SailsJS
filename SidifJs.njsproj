@@ -1,0 +1,339 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3b4f51f7-19bd-4cec-b629-c316c03c3934}</ProjectGuid>
+    <ProjectHome />
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile>app.js</StartupFile>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Compile Include="app.js" />
+    <Compile Include="Gruntfile.js" />
+    <Compile Include="gulpfile.js" />
+    <Content Include="assets\robots.txt" />
+    <Content Include="assets\favicon.ico" />
+    <Compile Include="config\blueprints.js" />
+    <Compile Include="config\bootstrap.js" />
+    <Compile Include="config\connections.js" />
+    <Compile Include="config\cors.js" />
+    <Compile Include="config\csrf.js" />
+    <Compile Include="config\globals.js" />
+    <Compile Include="config\http.js" />
+    <Compile Include="config\i18n.js" />
+    <Compile Include="config\log.js" />
+    <Compile Include="config\models.js" />
+    <Compile Include="config\policies.js" />
+    <Compile Include="config\routes.js" />
+    <Compile Include="config\session.js" />
+    <Compile Include="config\sockets.js" />
+    <Compile Include="config\views.js" />
+    <Content Include="files\0.jpg" />
+    <Content Include="htmlBoletines\2011_Boletín_1283.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1284.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1285.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1286.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1287.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1288.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1289.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1290.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1291.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1292.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1293.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1294.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1295.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1296.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1297.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1298.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1299.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1301.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1302.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1303.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1304.html" />
+    <Content Include="htmlBoletines\2011_Boletín_1305.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1323.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1324.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1325.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1326.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1327.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1328.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1329.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1330.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1331.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1332.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1333.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1334.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1335.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1336.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1337.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1338.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1339.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1340.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1341.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1342.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1343.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1344.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1345.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1346.html" />
+    <Content Include="htmlBoletines\2012_Boletín_1347.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1011.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1012.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1013.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1014.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1015.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1016.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1017.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1018.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1019.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1020.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1021.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1022.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1023.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1024.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1025.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1026.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1027.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1028.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1029_.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1030.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1031.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1032.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1033.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1034.html" />
+    <Content Include="htmlBoletines\2013_Boletín_1035.html" />
+    <Content Include="htmlBoletines\2014_Boletín_947.html" />
+    <Content Include="htmlBoletines\2014_Boletín_948.html" />
+    <Content Include="htmlBoletines\2014_Boletín_949.html" />
+    <Content Include="htmlBoletines\2014_Boletín_950.html" />
+    <Content Include="htmlBoletines\2014_Boletín_951.html" />
+    <Content Include="htmlBoletines\2014_Boletín_952.html" />
+    <Content Include="htmlBoletines\2014_Boletín_953.html" />
+    <Content Include="htmlBoletines\2014_Boletín_954.html" />
+    <Content Include="htmlBoletines\2014_Boletín_955.html" />
+    <Content Include="htmlBoletines\2014_Boletín_956.html" />
+    <Content Include="htmlBoletines\2014_Boletín_957.html" />
+    <Content Include="htmlBoletines\2014_Boletín_958.html" />
+    <Content Include="htmlBoletines\2014_Boletín_961.html" />
+    <Content Include="htmlBoletines\2014_Boletín_962.html" />
+    <Content Include="htmlBoletines\2014_Boletín_963.html" />
+    <Content Include="htmlBoletines\2014_Boletín_964.html" />
+    <Content Include="htmlBoletines\2014_Boletín_965.html" />
+    <Content Include="htmlBoletines\2014_Boletín_966.html" />
+    <Content Include="htmlBoletines\2014_Boletín_967.html" />
+    <Content Include="htmlBoletines\2014_Boletín_968.html" />
+    <Content Include="htmlBoletines\2014_Boletín_969.html" />
+    <Content Include="htmlBoletines\2014_Boletín_970.html" />
+    <Content Include="htmlBoletines\2014_Boletín_971.html" />
+    <Content Include="htmlBoletines\2014_Comunicado_959.html" />
+    <Content Include="htmlBoletines\2015_Boletin_1266.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1243.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1244.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1245.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1247.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1248.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1249.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1250.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1251.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1252.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1253.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1254.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1255.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1256.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1257.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1258.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1259.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1260.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1261.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1262.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1263.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1264.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1265.html" />
+    <Content Include="htmlBoletines\2015_Boletín_1267.html" />
+    <Content Include="htmlBoletines\2015_Boletín_458.html" />
+    <Content Include="htmlBoletines\2015_Comunicado_1246.html" />
+    <Content Include="htmlBoletines\2016_Boletín_477.html" />
+    <Content Include="htmlBoletines\2016_Boletín_762.html" />
+    <Content Include="htmlBoletines\2016_Boletín_763.html" />
+    <Content Include="htmlBoletines\2016_Boletín_764.html" />
+    <Content Include="htmlBoletines\2016_Boletín_765.html" />
+    <Content Include="htmlBoletines\2016_Boletín_766.html" />
+    <Content Include="htmlBoletines\2016_Boletín_767.html" />
+    <Content Include="htmlBoletines\2016_Boletín_768.html" />
+    <Content Include="htmlBoletines\2016_Boletín_769.html" />
+    <Content Include="htmlBoletines\2016_Boletín_770.html" />
+    <Content Include="htmlBoletines\2016_Boletín_771.html" />
+    <Content Include="htmlBoletines\2016_Boletín_772.html" />
+    <Content Include="htmlBoletines\2016_Boletín_773.html" />
+    <Content Include="htmlBoletines\2016_Boletín_774.html" />
+    <Content Include="htmlBoletines\2016_Boletín_775.html" />
+    <Content Include="htmlBoletines\2016_Boletín_776.html" />
+    <Content Include="htmlBoletines\2016_Boletín_777.html" />
+    <Content Include="htmlBoletines\2016_Boletín_778.html" />
+    <Content Include="htmlBoletines\2016_Boletín_779.html" />
+    <Content Include="htmlBoletines\2016_Boletín_780.html" />
+    <Content Include="htmlBoletines\2016_Boletín_781.html" />
+    <Content Include="htmlBoletines\2016_Boletín_782.html" />
+    <Content Include="htmlBoletines\2016_Boletín_783.html" />
+    <Content Include="htmlBoletines\2016_Boletín_784.html" />
+    <Content Include="htmlBoletines\2016_Boletín_785.html" />
+    <Content Include="htmlBoletines\2016_Boletín_786.html" />
+    <Content Include="tasks\README.md" />
+    <Compile Include="tasks\pipeline.js" />
+    <Content Include="views\403.ejs" />
+    <Content Include="views\404.ejs" />
+    <Content Include="views\500.ejs" />
+    <Content Include="views\contraloria.ejs" />
+    <Content Include="views\homepage.ejs" />
+    <Content Include="views\index.ejs" />
+    <Content Include="views\layout.ejs" />
+    <Content Include="views\procuraduria.ejs" />
+    <Content Include="views\procuraduria2010.ejs" />
+    <Compile Include="api\controllers\BoletinController.js" />
+    <Compile Include="api\controllers\PersonasController.js" />
+    <Compile Include="api\models\Boletin.js" />
+    <Compile Include="api\models\Personas.js" />
+    <Compile Include="api\policies\sessionAuth.js" />
+    <Compile Include="api\responses\badRequest.js" />
+    <Compile Include="api\responses\forbidden.js" />
+    <Compile Include="api\responses\notFound.js" />
+    <Compile Include="api\responses\ok.js" />
+    <Compile Include="api\responses\serverError.js" />
+    <Compile Include="api\utlities\Util.js" />
+    <Content Include="assets\css\bootstrap.css" />
+    <Content Include="assets\css\bootstrap.min.css" />
+    <Content Include="assets\css\simple-sidebar.css" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
+    <Compile Include="assets\js\dependencies\bootstrap.js" />
+    <Compile Include="assets\js\dependencies\bootstrap.min.js" />
+    <Compile Include="assets\js\dependencies\jquery.js" />
+    <Compile Include="assets\js\dependencies\sails.io.js" />
+    <Compile Include="config\env\development.js" />
+    <Compile Include="config\env\production.js" />
+    <Content Include="config\locales\de.json" />
+    <Content Include="config\locales\en.json" />
+    <Content Include="config\locales\es.json" />
+    <Content Include="config\locales\fr.json" />
+    <Content Include="config\locales\_README.md" />
+    <Compile Include="tasks\config\clean.js" />
+    <Compile Include="tasks\config\coffee.js" />
+    <Compile Include="tasks\config\concat.js" />
+    <Compile Include="tasks\config\copy.js" />
+    <Compile Include="tasks\config\cssmin.js" />
+    <Compile Include="tasks\config\jst.js" />
+    <Compile Include="tasks\config\less.js" />
+    <Compile Include="tasks\config\sails-linker.js" />
+    <Compile Include="tasks\config\sync.js" />
+    <Compile Include="tasks\config\uglify.js" />
+    <Compile Include="tasks\config\watch.js" />
+    <Compile Include="tasks\register\build.js" />
+    <Compile Include="tasks\register\buildProd.js" />
+    <Compile Include="tasks\register\compileAssets.js" />
+    <Compile Include="tasks\register\default.js" />
+    <Compile Include="tasks\register\linkAssets.js" />
+    <Compile Include="tasks\register\linkAssetsBuild.js" />
+    <Compile Include="tasks\register\linkAssetsBuildProd.js" />
+    <Compile Include="tasks\register\prod.js" />
+    <Compile Include="tasks\register\syncAssets.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="api" />
+    <Folder Include="api\controllers" />
+    <Folder Include="api\models" />
+    <Folder Include="api\policies" />
+    <Folder Include="api\responses" />
+    <Folder Include="api\services" />
+    <Folder Include="api\utlities" />
+    <Folder Include="assets" />
+    <Folder Include="assets\css" />
+    <Folder Include="assets\fonts" />
+    <Folder Include="assets\images" />
+    <Folder Include="assets\js" />
+    <Folder Include="assets\js\dependencies" />
+    <Folder Include="assets\styles" />
+    <Folder Include="assets\templates" />
+    <Folder Include="config" />
+    <Folder Include="config\env" />
+    <Folder Include="config\locales" />
+    <Folder Include="files" />
+    <Folder Include="htmlBoletines" />
+    <Folder Include="tasks" />
+    <Folder Include="tasks\config" />
+    <Folder Include="tasks\register" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\globals\" />
+    <Folder Include="typings\globals\cheerio\" />
+    <Folder Include="typings\globals\ejs\" />
+    <Folder Include="typings\globals\html-pdf\" />
+    <Folder Include="typings\globals\jspdf\" />
+    <Folder Include="typings\globals\moment\" />
+    <Folder Include="typings\globals\node\" />
+    <Folder Include="typings\globals\request\" />
+    <Folder Include="typings\globals\unorm\" />
+    <Folder Include="typings\globals\utf8\" />
+    <Folder Include="views" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="typings\globals\cheerio\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\ejs\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\html-pdf\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\jspdf\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\moment\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\request\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\unorm\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\utf8\index.d.ts" />
+    <TypeScriptCompile Include="typings\index.d.ts" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
