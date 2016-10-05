@@ -49,13 +49,15 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
   // El método realiza el análisis a los boletines de la procuradura del 2011 y después.
-  'GET /boletin': 'BoletinController.find',
+  'GET /boletinesNuevos': 'BoletinController.boletinesNuevos',
   // El método realiza el análisis a los boletines de la procuradura del 2010 y antes.
-  'GET /boletin2010': 'BoletinController.findOld',
+  'GET /boletinesNuevos': 'BoletinController.boletinesAntiguos',
   // El método realiza el análisis a el boletin del 2010 o antes entrado como parametro GET .
   'GET /individual': 'BoletinController.individual',
   // El método realiza el análisis a los boletin del 2011 o después entrado como parametro.
   'GET /individual2011': 'BoletinController.individual2011',
+
+
 
 
   // El método realiza un análisis en los archivos locales de la Contraloría. 
@@ -67,6 +69,7 @@ module.exports.routes = {
   //Método que genera un html
   'GET /generarHtml': 'PersonasController.generarHtml',
   //Método que descarga un archivo pfd para  .
-  'GET /descargaPdf': 'PersonasController.descargaPdf'
+  'GET /descargaPdf': 'PersonasController.descargaHtmls',
+
 
 };

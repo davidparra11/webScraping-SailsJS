@@ -70,11 +70,9 @@ node_modules
 bower_components
 pdfs
 htmls
-htmlBoletines
+htmlBoletines/*.html
 pdfBoletines
-
-
-
+imgBoletines
 
 ################################################
 # Sails.js / Waterline / Grunt

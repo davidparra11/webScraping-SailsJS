@@ -24,6 +24,8 @@
     "grunt-contrib-watch": "0.5.3",
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.2.4",
+    "html-pdf": "^2.1.0",
+    "html-to-pdf": "^0.1.11",
     "iconv-lite": "^0.4.13",
     "include-all": "~0.1.6",
     "jspdf": "^1.2.61",
@@ -39,7 +41,8 @@
     "unorm": "^1.4.1",
     "utf8": "^2.1.1",
     "util": "^0.10.3",
-    "walk": "^2.3.9"
+    "walk": "^2.3.9",
+    "webshot": "^0.18.0"
   },
   "scripts": {
     "debug": "node debug app.js",

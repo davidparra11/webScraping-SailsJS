@@ -150,35 +150,14 @@ module.exports = {
 
 	},
 
-	descargaPdf: function(req, res) {
-
-
+	descargaHtmls: function(req, res) {
 		//var test = function(){
 		console.log('hola mundo');
-
-
-		/*
-				phantom.create().then(function(ph) {
-					ph.createPage().then(function(page) {
-						page.open("http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view").then(function(status) {
-							console.log('Estatus: ' + status);
-							page.render('./pdfs/JOSE_JESUS_C.pdf').then(function() {
-								 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
-								console.log('Page Rendered');
-
-								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
-								//wstream.write(data);
-								ph.exit();
-							});
-						});
-					});
-				});
-		*/
 
 		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', { //busquedas.dafp.gov.co
 			followLinks: false
 		});
-		var i = 1 ;
+		var i = 1;
 
 		walker.on('file', function(root, stat, next) {
 			console.log('hola mundo insade');
@@ -200,80 +179,17 @@ module.exports = {
 				//linkPersonasArray.push(url);
 
 				request(url).pipe(fs.createWriteStream('./htmls/' + nombre + '.html'));
-				
-
-
-				phantom.create().then(function(ph) {
-					ph.createPage().then(function(page) {
-						page.open(url).then(function(status) {
-							console.log('Estatus: ' + JSON.stringify(status));
-							page.render('./pdfs/' + nombre + '.pdf').then(function() {
-								//status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
-								console.log('Page Rendered');
-								i++;
-
-								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
-								//wstream.write(data);
-								ph.exit();
-							});
-						});
-					});
-				});
-
 			});
-
-
 
 			next();
 		});
-
-
 
 		/*walker.on('end', function() {
 			console.log(files);
 		});*/
 
 
-		/*for (var llaveFiles in filesArray) {
-
-			console.log(llaveFiles);
-
-			var $ = cheerio.load(fs.readFileSync(filesArray[llaveFiles]));
-
-			$('a[ctype=c]').each(function() {
-				var url = $(this).attr('href');
-				//var url = $(this).text();  $('b')
-				//console.log('Texto: ' + JSON.stringify(url));  
-				//linkPersonasArray.push(url);
-
-
-				
-
-			});
-			//console.log(linkPersonasArray);
-			console.log(linkPersonasArray);
-
-		}
-
-		for (var llavePersonas in linkPersonasArray) {
-			console.log(linkPersonasArray);
-			phantom.create().then(function(ph) {
-					ph.createPage().then(function(page) {
-						page.open(filesArray[llavePersonas]).then(function(status) {
-							console.log('Estatus: ' + status);
-							page.render('./pdfs/' + linkPersonasArray[llavePersonas] + '.pdf').then(function() {
-								 //status.pipe(fs.createWriteStream('/pdfs/foo.pdf'));
-								console.log('Page Rendered');
-
-								//var wstream = fs.createWriteStream('/pdfs/test.pdf');.pipe(fs.createWriteStream('/pdfs/h.pdf'))
-								//wstream.write(data);
-								ph.exit();
-							});
-						});
-					});
-				});
-
-		}*/
+		
 
 		//}fin de la funcion
 
