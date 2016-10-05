@@ -7,7 +7,6 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	fsc = require("fs-cheerio"),
 	direccionLocal = 'C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/',
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
@@ -20,16 +19,9 @@ var request = require('request'),
 	formacionArray = [],
 	utils = require('../utlities/Util');
 
-//var doc = new jsPDF();
-
-var Xray = require('x-ray');
-var x = Xray();
-
 var walk = require('walk');
 var filesArray = [];
 var linkPersonasArray = [];
-
-var phantom = require('phantom');
 
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
@@ -43,45 +35,20 @@ module.exports = {
 
 		$('a[ctype=c]').each(function() {
 			var url = $(this).attr('href');
-			//var url = $(this).text();  $('b')
 			console.log('Texto: ' + JSON.stringify(url));
-
 		});
-
-		// for(var i in allImgs){
-
-		// } cheerio.load(fs.readFileSync('path/to/file.html'));
-
-
 		request(fs.readFileSync(direccionLocal + 'search000d.html'), function(err, resp, body) {
 			//	console.log('resp ' + JSON.stringify(resp.statusCode));
 
 			if (!err && resp.statusCode == 200) {
 				//console.log('body ' + JSON.stringify(body));
 				var $ = cheerio.load(body);
-				console.log('$ ' + JSON.stringify($)); //#content', '#titulo_zona_noticias', a.title, 
-
-				/*$('a.news-list-title').each(function() {
-					//var url =  $(this).attr('href');
-					var url = $(this).text();
-				//	console.log('Texto: ' + JSON.stringify(url));
-					/*if(url.indexOf('i.imgur.com')!= -1){
-					 urls.push(url);
-					 console.log('URLS ' + JSON.stringify(urls));
-					 }
-
-				});*/
+				console.log('$ ' + JSON.stringify($)); 
 
 				$('b').each(function() {
 					//var url =  $(this).attr('href');
 					var url = $(this).text();
-					console.log('Texto: ' + JSON.stringify(url));
-					/*if(url.indexOf('i.imgur.com')!= -1){
-					 urls.push(url);
-					 console.log('URLS ' + JSON.stringify(urls));
-					 }
-					if (url !== undefined)
-						linksArray.push(url);*/
+					console.log('Texto: ' + JSON.stringify(url));					
 				});
 			} else {
 				console.log('error en la descarga');
@@ -218,14 +185,8 @@ module.exports = {
 				var nombreSinEspacios = nombreUno.replace(/\t/g, "")
 					.replace(/\n/g, "")
 					.trim()
-					.replace(/ /g, '_'); //.replace("/\n/gi,", ".")  [a-zA-Z]+
-				//var url = $(this).text();  $('b')
-				console.log('Texto: ' + JSON.stringify(url));
-				//linkPersonasArray.push(url);
-				//request(url).pipe(fs.createWriteStream('./htmls/' + nombre + '.html'));
+					.replace(/ /g, '_'); 
 				request(url, function(err, resp, body) {
-					//console.log('resp ' + JSON.stringify(resp.statusCode));
-
 					if (!err && resp.statusCode == 200) {
 						var $ = cheerio.load(body);
 						var correo = "";
@@ -233,14 +194,12 @@ module.exports = {
 						var formacion = "";
 						//nombre
 						$('span.nombre_funcionario').each(function() {
-							//var url =  $(this).attr('href');
 							var datos = $(this).last().text();
-							console.log('Nombre: ' + JSON.stringify(datos));
+							//console.log('Nombre: ' + JSON.stringify(datos));
 							nombre = datos;
 						});
 						//correo y teléfono
 						$('span.texto_detalle_directorio').each(function() {
-							//var url =  $(this).attr('href');
 							var datos = $(this).last().text();
 							personaArray.push(datos);
 						});
@@ -250,7 +209,7 @@ module.exports = {
 							var datos = $(this).last().text();
 							formacionArray.push(datos);
 						});
-
+						
 						correo = personaArray[0];
 						telefono = personaArray[1];
 						formacionAcademica = formacionArray[2];

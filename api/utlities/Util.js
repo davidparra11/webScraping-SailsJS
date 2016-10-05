@@ -10,7 +10,7 @@ module.exports = {
 
 	},
 
-	agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha, fuente, urlWeb, localPdf, localHtml) {
+	agregarToDB: function(boletin, titulo, textoCompletoUno, textoUnoDos, fecha, fuente, urlWeb, localPdf, localHtml, infoBoletin) {
 
 		var x = {
 			titulo: titulo,
@@ -30,10 +30,10 @@ module.exports = {
 			.exec(function(error, boletin) {
 				//console.log(boletin);
 				if (error) {
-					console.log('error DB');
+					console.log('error DB; boletin: ' + infoBoletin);
 					return true;
 				} else {
-					console.log('OK');
+					console.log('OK, DB');
 					return true;
 				}
 			}); /**/
@@ -41,7 +41,7 @@ module.exports = {
 		//return true;       
 	},
 
-	addPersonasToDB: function(nombre, correo, telefono, formacionAcademica) {
+	addPersonasToDB: function(nombre, correo, telefono, formacionAcademica, infoBoletin) {
 
 		var x = {
 			nombre: nombre,
@@ -53,10 +53,10 @@ module.exports = {
 			.exec(function(error, persona) {
 				//console.log(boletin);
 				if (error) {
-					console.log('error DB');
+					console.log('error DB con: ' + infoBoletin);
 					return true;
 				} else {
-					console.log('OK');
+					console.log('OK, DB.');
 					return true;
 				}
 			}); /**/

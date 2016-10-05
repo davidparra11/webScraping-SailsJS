@@ -25,17 +25,12 @@ var request = require('request'),
 	utils = require('../utlities/Util');
 
 const util = require('util');
-const punycode = require('punycode');
-var Xray = require('x-ray');
-var x = Xray();
 var unorm = require('unorm');
-var htmlToText = require('html-to-text');
 var iconv = require('iconv-lite');
 var y = 0;
-var phantom = require('phantom');
-var htmlToPdf = require('html-to-pdf');
-var webshot = require('webshot');
-
+var moment = require('moment');
+var now = moment();
+var testDate = require('date-utils').language("es");
 
 var month = new Array();
 month[0] = "Jan";
@@ -61,24 +56,19 @@ module.exports = {
 	boletinesNuevos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2011 hacia adelante.');
-
-		var moment = require('moment');
-		var now = moment();
-		var testDate = require('date-utils').language("es");
 		contador = 1;
+		boletinesNuevosError = [];
 
 		for (var key in onceArray) {
 			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=25&first_result=0';
 			request(direccionWeb, function(err, resp, body) {
-				//console.log('resp ' + JSON.stringify(resp.statusCode));
 				if (!err && resp.statusCode == 200) {
-					////console.log('body ' + JSON.stringify(body));
 					var $ = cheerio.load(body);
 					$('a.news-list-title').each(function() {
 						var url = $(this).attr('href');
 						if (url === undefined)
 							return;
-						//console.log('URL: ' + JSON.stringify(url));arreglo.push(url);
+
 						request.get({
 								uri: 'http://www.procuraduria.gov.co/portal/' + url,
 								encoding: null
@@ -96,7 +86,6 @@ module.exports = {
 									var titulo = "";
 									var fuente = "";
 									var yearBoletin = "";
-
 
 									//texto
 									$('p.MsoNormal').each(function() {
@@ -144,7 +133,6 @@ module.exports = {
 										var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
 
 										var result = fechaSinFormato.match(patt1);
-										//console.log('Result: ' + result);
 										//var result2 = result.toLocaleLowerCase();
 										var mes = Date.getMonthNumberFromName(result.toString().trim());
 										var mesNombre = month[mes];
@@ -156,7 +144,7 @@ module.exports = {
 									});
 
 									var boletinSinEspacios = boletin.replace(/ /g, "_");
-									console.log('Boletin: ' + boletin + 'Año: ' + yearBoletin);
+									//console.log('Boletin: ' + boletin + 'Año: ' + yearBoletin);
 
 									var fechaSinCodificacion = fecha;
 									//fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
@@ -166,13 +154,16 @@ module.exports = {
 									dirWeb = 'http://www.procuraduria.gov.co/portal/' + url;
 
 									dirLocalHtml = './htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html';
+									var infoBoletin = 'Boletin: ' + boletinSinEspacios;
 									//agregar datos de las variables a la base de datos.
-									utils.agregarToDB(boletin, titulo, texto, textoUnoDos, fechaCodificada, 'Procuraduria', dirWeb, '', dirLocalHtml);
+									utils.agregarToDB(boletin, titulo, texto, textoUnoDos, fechaCodificada, 'Procuraduria', dirWeb, '', dirLocalHtml, infoBoletin);
 
 									request('http://www.procuraduria.gov.co/portal/' + url).pipe(fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html'));
 									boletinArray.length = 0;
 								} else {
 									console.log('hubo problemas con: ' + url);
+									boletinesNuevosError.push(url);
+									console.log('boletines con problemas (direccion: ' + boletinesNuevosError);
 									return true;
 								}
 							});
@@ -188,11 +179,6 @@ module.exports = {
 	boletinesAntiguos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
-
-		var moment = require('moment');
-		var now = moment();
-		var testDate = require('date-utils').language("es");
-		var pdf = require('html-pdf');
 
 		var boletinesFalsos = [];
 		//var i = 1;
@@ -294,7 +280,6 @@ module.exports = {
 					if (fecha == '') {
 						$('strong').each(function() {
 							var datoFecha = $(this).text();
-							//console.log('Fecha STRONG : ' + JSON.stringify(datoFecha));
 							fecha = datoFecha.trim();
 						});
 					}
@@ -305,9 +290,7 @@ module.exports = {
 					}
 
 					var boletinSinEspacios = boletin.replace(/ /g, "_");
-
 					var posTres = fecha.indexOf(",");
-
 					var fechaSinFormato = fecha.slice(posTres + 1);
 					var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
 
@@ -320,27 +303,27 @@ module.exports = {
 					var mes = Date.getMonthNumberFromName(result.toString().trim());
 					var mesNombre = month[mes];
 
-
 					var fechaSinMes = fechaSinFormato.replace(result, "");
 					var fechaSinCodificacion = mesNombre + ' ' + fechaSinMes;
 					fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
 
 					fechaCodificada = Date.parse(fechaSinCodificacion);
-					console.log('YEAR: ' + yearArray[llave] + ' -i: ' + i + ' -y: ' + y);
-					console.log('Boletin: ' + JSON.stringify(boletin));
+					//console.log('YEAR: ' + yearArray[llave] + ' -i: ' + i + ' -y: ' + y);
+					//console.log('Boletin: ' + JSON.stringify(boletin));
 
 					dirLocalHtml = './htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html';
-					dirLocalPdf = './pdfBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.pdf';
+					//dirLocalPdf = './pdfBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.pdf';
+					var infoBoletin = 'año: ' + yearArray[llave] + 'boletin ' + boletinSinEspacios + '.' + i;
 
 					//agregar datos de las variables a la base de datos.
-					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'Procuraduria', dirInterna, '', dirLocalHtml);
+					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'Procuraduria', dirInterna, '', dirLocalHtml, infoBoletin);
 
 					request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
 					boletinArray.length = 0;
 				} else {
 					console.log('Hubo un error en la descarga de la página: - ' + dirInterna + ' -i: ' + i);
-					boletinesFalsos.push(i);
-					console.log('direccion: ' + boletinesFalsos);
+					//boletinesFalsos.push(i);
+					//console.log('direccion: ' + boletinesFalsos);
 					//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[key] + '/noticias_' + i + '.htm';
 				}
 			});
@@ -351,7 +334,7 @@ module.exports = {
 	},
 
 	/**
-	 * Analiza un boteletin en específico para los años 2010 y anteriores.
+	 * Analiza un boteletin en específico solo para los años 2010 y anteriores.
 	 */
 	individual: function(req, res) {
 
@@ -359,7 +342,6 @@ module.exports = {
 			return res.send(400, "el valor de 'boletin' no se ha introducido.");
 		}
 
-		var testDate = require('date-utils').language("es");
 		//console.log('se inició la funcion para analizr los boletines del 2010 hacia atrás. ');
 		var numBoletin = req.param("boletin");
 		// el valor del año para este metodo tiene un intervalo cerrado entre 2004 y 2010.
@@ -376,16 +358,11 @@ module.exports = {
 				var fechaCodificada = "";
 				//se recueran las etiquetas p del DOM html.
 				$('p').each(function() {
-					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					//console.log('Texto: ' + JSON.stringify(datos));
 					boletinArray.push(datos);
 					fechaArray = $(this).find("strong").text();
-					////console.log('Fecha:::::::::::::  ' + fechaArray.length);
 					if (fechaArray.length > 16 && fecha == '' && fechaArray.length < 40 && fechaArray.search('[0-9]') != -1) // && fecha == '' 
 						fecha = fechaArray;
-					//console.log('Fecha strong: ' + JSON.stringify(fecha));
-
 				});
 
 				// bloque de variables para seleccionar las partes del html.
@@ -398,7 +375,6 @@ module.exports = {
 				if (fecha == '') {
 					$('strong').each(function() {
 						var datoFecha = $(this).text();
-						//console.log('Fecha STRONG : ' + JSON.stringify(datoFecha));
 						fecha = datoFecha;
 					});
 				}
@@ -408,38 +384,19 @@ module.exports = {
 					//console.log('Fecha: ' + JSON.stringify(datoFecha));
 					fecha = datoFecha;
 				});
-
-
 				var posTres = fecha.indexOf(",");
-
 				var fechaSinFormato = fecha.slice(posTres + 1);
 				var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
-
 				var result = fechaSinFormato.match(patt1);
-				//console.log('Result: ' + result);
 				//var result2 = result.toLocaleLowerCase();
 				var mes = Date.getMonthNumberFromName(result.toString().trim());
 				var mesNombre = month[mes];
-
 				var fechaSinMes = fechaSinFormato.replace(result, "");
 				var fechaSinCodificacion = mesNombre + ' ' + fechaSinMes;
 				fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
-
 				fechaCodificada = Date.parse(fechaSinCodificacion);
-
-				////console.log('boletinArray[3].: ' + JSON.stringify(boletinArray[3]));
-				//console.log('boletin: ' + JSON.stringify(boletin));
-				//console.log('Titulo: ' + JSON.stringify(titulo));
-				//console.log('TextoCompletoUno: ' + textoCompletoUno);
-				//console.log('Texto1y2: ' + textoUnoDos);
-				//console.log('Fecha sin codificacion: ' + fechaSinCodificacion);
-				//console.log('fechaCodificada: ' + fechaCodificada);
-
-				//funcion para grabar los datos en DB.
-				//utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fecha);
 				boletinArray.length = 0;
 			}
-
 		});
 		//return res.view('procuraduria');
 	},
@@ -448,10 +405,10 @@ module.exports = {
 	 * Analiza un boteletin en específico para los años 2011 y posteriores.
 	 */
 	individual2011: function(req, res) {
+
 		if (!req.param("tituloUrl")) {
 			return res.send(400, "el valor de 'tituloUrl' no se ha introducido.");
 		}
-
 		console.log('Se inició el recurso para tomar datos de un boteltin individual del 2011 y posteriores.');
 		var tituloUrl = req.param("tituloUrl");
 
@@ -475,21 +432,16 @@ module.exports = {
 					var fuente = "";
 
 					$('p.MsoNormal').each(function() {
-						//var url =  $(this).attr('href');
 						var url = $(this).last().text();
 						texto = url.toString();
-
 					});
 
 					if (texto === undefined || texto == "") {
 						$('div[align=justify]').each(function() {
-							//var url =  $(this).attr('href');
 							var datos = $(this).last().text();
 							texto = datos;
-							//console.log('Texto: ' + texto);
 						});
 					}
-
 
 					//parrafos (uno y dos) del texto
 					$('p').each(function() {
@@ -503,18 +455,14 @@ module.exports = {
 
 					//titulo
 					$('h2.prueba').each(function() {
-						//var url =  $(this).attr('href');
 						var datos = $(this).last().text(); //encode_utf8
 						titulo = decodeURIComponent(datos);
-						//console.log('Tituto: ' + titulo);
 					});
 
 					//boletin
 					$('h3.news-view-subtitle').each(function() {
-						//var url =  $(this).attr('href');
 						var datos = $(this).last().text().toString();
-						boletin = punycode.ucs2.decode(datos);
-						//console.log('Boletin: ' + boletin);
+						boletin = datos;
 					});
 
 					//fecha y fuente
@@ -530,22 +478,13 @@ module.exports = {
 
 						var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
 						var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
-
 						var result = fechaSinFormato.match(patt1);
-						//console.log('Result: ' + result);
 						//var result2 = result.toLocaleLowerCase();
 						var mes = Date.getMonthNumberFromName(result.toString().trim());
 						var mesNombre = month[mes];
-
 						var fechaSinMes = fechaSinFormato.replace(result, "");
-
 						fecha = mesNombre + ' ' + fechaSinMes;
-
 					});
-					//console.log('FECHAs: ' + fecha);
-					//console.log('FECHA UTV: ' + Date.parse(fecha));
-					//Método para agregar las variables a la DB.
-					//utils.agregarToDB(boletin, titulo, texto, texto, fecha);//.dateParser()( "11/30/2010" )
 					boletinArray.length = 0;
 
 				}
