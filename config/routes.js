@@ -69,7 +69,9 @@ module.exports.routes = {
   //Método que genera un html
   'GET /generarHtml': 'PersonasController.generarHtml',
   //Método que descarga un archivo pfd para  .
-  'GET /descargaPdf': 'PersonasController.descargaHtmls',
+  'GET /descargaHtmls': 'PersonasController.descargaHtmls',
+  //Método que analiza individualmente la HV del contratista.
+  'GET /personaContraloria': 'PersonasController.personaContraloria'
 
 
 };

@@ -39,6 +39,29 @@ module.exports = {
 			}); /**/
 
 		//return true;       
+	},
+
+	addPersonasToDB: function(nombre, correo, telefono, formacionAcademica) {
+
+		var x = {
+			nombre: nombre,
+			correo: correo,
+			telefono: telefono,
+			otro: formacionAcademica
+		};		
+		Personas.create(x)
+			.exec(function(error, persona) {
+				//console.log(boletin);
+				if (error) {
+					console.log('error DB');
+					return true;
+				} else {
+					console.log('OK');
+					return true;
+				}
+			}); /**/
+
+		//return true;  
 	}
 
 }

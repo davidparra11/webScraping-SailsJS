@@ -7,8 +7,35 @@
 
 module.exports = {
 
-  attributes: {
+	//connection: 'mysql',
+	autoCreatedAt: false,
+	autoUpdatedAt: false,
 
-  }
+	attributes: {
+		id: {
+			type: 'integer',
+			autoIncrement: true,
+			primaryKey: true
+		},
+		nombre: {
+			type: 'string'
+		},
+		correo: {
+			type: 'string'
+		},
+		telefono: {
+			type: 'string'
+		},
+		otro: {
+			type: 'string',
+			size: 4000
+		},
+		creationDate: {
+			columnName: 'cre_dt',
+			type: 'datetime',
+			defaultsTo: function() {
+				return new Date();
+			}
+		}
+	}
 };
-

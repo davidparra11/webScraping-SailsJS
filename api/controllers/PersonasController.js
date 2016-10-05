@@ -16,6 +16,8 @@ var request = require('request'),
 	direccionWebContraloria = 'http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view',
 	Regex = require("regex"),
 	linksArray = [],
+	personaArray = [],
+	formacionArray = [],
 	utils = require('../utlities/Util');
 
 //var doc = new jsPDF();
@@ -113,6 +115,51 @@ module.exports = {
 		return res.view('contraloria');
 	},
 
+	personaContraloria: function(req, res) {
+
+		var direccionWeb = 'http://www.sigep.gov.co/hdv/-/directorio/M571786-0896-4/view';
+		request(direccionWeb, function(err, resp, body) {
+			//console.log('resp ' + JSON.stringify(resp.statusCode));
+
+			if (!err && resp.statusCode == 200) {
+				var $ = cheerio.load(body);
+				var correo = "";
+				var telefono = "";
+				var formacion = "";
+				//nombre
+				$('span.nombre_funcionario').each(function() {
+					//var url =  $(this).attr('href');
+					var datos = $(this).last().text();
+					console.log('Nombre: ' + JSON.stringify(datos));
+					nombre = datos;
+				});
+				//correo y teléfono
+				$('span.texto_detalle_directorio').each(function() {
+					//var url =  $(this).attr('href');
+					var datos = $(this).last().text();
+					console.log('correo: ' + JSON.stringify(datos));
+					personaArray.push(datos);
+				});
+				// formacion académica
+				$('ul').each(function() {
+					//var url =  $(this).attr('href');
+					var datos = $(this).last().text();
+					console.log('Formacion Académica: ' + JSON.stringify(datos));
+					formacionArray.push(datos);
+				});
+
+				correo = personaArray[0];
+				telefono = personaArray[1];
+				formacionAcademica = formacionArray[2];
+
+				personaArray.length = 0;
+				formacionArray.length = 0;
+			}
+
+		});
+
+	},
+
 	individualContraloria: function(req, res) {
 
 		var $ = cheerio.load(fs.readFileSync('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/search000d.html'));
@@ -168,35 +215,64 @@ module.exports = {
 				//var nombre = $(this).text();
 				var testNombre = 'test';
 				var nombreUno = $(this).text().toString();
-				var nombre = nombreUno.replace(/\t/g, "")
+				var nombreSinEspacios = nombreUno.replace(/\t/g, "")
 					.replace(/\n/g, "")
 					.trim()
 					.replace(/ /g, '_'); //.replace("/\n/gi,", ".")  [a-zA-Z]+
 				//var url = $(this).text();  $('b')
-				//console.log('Texto: ' + JSON.stringify(url));  
+				console.log('Texto: ' + JSON.stringify(url));
 				//linkPersonasArray.push(url);
+				//request(url).pipe(fs.createWriteStream('./htmls/' + nombre + '.html'));
+				request(url, function(err, resp, body) {
+					//console.log('resp ' + JSON.stringify(resp.statusCode));
 
-				request(url).pipe(fs.createWriteStream('./htmls/' + nombre + '.html'));
+					if (!err && resp.statusCode == 200) {
+						var $ = cheerio.load(body);
+						var correo = "";
+						var telefono = "";
+						var formacion = "";
+						//nombre
+						$('span.nombre_funcionario').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							console.log('Nombre: ' + JSON.stringify(datos));
+							nombre = datos;
+						});
+						//correo y teléfono
+						$('span.texto_detalle_directorio').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							personaArray.push(datos);
+						});
+						// formacion académica
+						$('ul').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							formacionArray.push(datos);
+						});
+
+						correo = personaArray[0];
+						telefono = personaArray[1];
+						formacionAcademica = formacionArray[2];
+
+						utils.addPersonasToDB(nombre, correo, telefono, 'otro');
+						request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+
+						personaArray.length = 0;
+						formacionArray.length = 0;
+					}
+
+				});
+
 			});
-
 			next();
 		});
 
 		/*walker.on('end', function() {
 			console.log(files);
 		});*/
-
-
-		
-
-		//}fin de la funcion
-
-
-
 		return res.view('procuraduria');
 		//test();
-
-
 	}
 
 };
