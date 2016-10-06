@@ -57,7 +57,7 @@ module.exports = {
 	 */
 	boletinesNuevos: function(req, res) {
 
-		console.log('Recurso para tomar datos de todos los boletines del 2011 hacia adelante.');
+		console.log('Recurso para tomar datos de todos ('+ process.env.NUM_RESULT_PROCU_NUEVOS +')los boletines del 2011 hacia adelante.');
 		contador = 1;
 		boletinesNuevosError = [];
 		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
