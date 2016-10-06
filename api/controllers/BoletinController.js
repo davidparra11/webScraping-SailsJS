@@ -12,7 +12,7 @@ var request = require('request'),
 	regex = new Regex(/(a|b)*abb/),
 	boletinArray = [],
 	boletinArrayHtml = [],
-	urls = [],
+	urls = [],	
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
@@ -30,6 +30,9 @@ var moment = require('moment');
 var now = moment();
 var testDate = require('date-utils').language("es");
 
+var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+//var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
+
 var month = new Array();
 month[0] = "Jan";
 month[1] = "Feb";
@@ -43,6 +46,7 @@ month[8] = "Sep";
 month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
+
 
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
@@ -180,15 +184,6 @@ module.exports = {
 	boletinesAntiguos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
-		// la variable de entorno selecciona el array de prueba, o el numero total de boletines antiguos
-		switch (process.env.SELEC_ARRAY) {
-			case 1:
-				cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
-				break;
-			case 2:
-				cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
-		}
-
 		var boletinesFalsos = [];
 		//var i = 1;
 		//var totContador = 920;
