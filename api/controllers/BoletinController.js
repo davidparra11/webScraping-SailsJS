@@ -58,9 +58,12 @@ module.exports = {
 		console.log('Recurso para tomar datos de todos los boletines del 2011 hacia adelante.');
 		contador = 1;
 		boletinesNuevosError = [];
+		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
+		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
+		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
 
 		for (var key in onceArray) {
-			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=25&first_result=0';
+			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
 			request(direccionWeb, function(err, resp, body) {
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(body);
