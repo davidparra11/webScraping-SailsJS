@@ -13,8 +13,6 @@ var request = require('request'),
 	boletinArray = [],
 	boletinArrayHtml = [],
 	urls = [],
-	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
@@ -182,11 +180,18 @@ module.exports = {
 	boletinesAntiguos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
+		// la variable de entorno selecciona el array de prueba, o el numero total de boletines antiguos
+		switch (process.env.SELEC_ARRAY) {
+			case 1:
+				cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
+				break;
+			case 2:
+				cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+		}
 
 		var boletinesFalsos = [];
 		//var i = 1;
 		//var totContador = 920;
-
 		bucleContador(cantBoletinesArray[y], y);
 		if (y > 6) {
 			return;
@@ -343,7 +348,7 @@ module.exports = {
 
 		if (!req.param("boletin")) {
 			return res.send(400, "el valor de 'boletin' no se ha introducido.");
-		}
+		}	
 
 		//console.log('se inició la funcion para analizr los boletines del 2010 hacia atrás. ');
 		var numBoletin = req.param("boletin");

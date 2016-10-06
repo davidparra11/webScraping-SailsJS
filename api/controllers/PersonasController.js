@@ -168,7 +168,7 @@ module.exports = {
 		//var test = function(){
 		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
 
-		var walker = walk.walk('C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas', { //busquedas.dafp.gov.co
+		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
 			followLinks: false
 		});
 		var i = 1;
