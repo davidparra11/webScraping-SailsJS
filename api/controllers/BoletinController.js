@@ -62,7 +62,9 @@ module.exports = {
 		boletinesNuevosError = [];
 		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
 		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
-		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+		//var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+		console.log(process.env.NUM_RESULT_PROCU_NUEVOS);
+		var numeroResultados = 25;
 
 		for (var key in onceArray) {
 			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
