@@ -26,6 +26,85 @@ var linkPersonasArray = [];
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
 module.exports = {
+
+	/**
+	 * método que recupera las HVs de los contratistas, los pasa a HTML y guarda datos importantes en DB.
+	 */
+	descargaHtmls: function(req, res) {
+		//var test = function(){
+		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
+
+		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
+			followLinks: false
+		});
+		var i = 1;
+
+		try {
+			walker.on('file', function(root, stat, next) {
+			//filesArray.push(root + '/' + stat.name);
+			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
+
+			$('a[ctype=c]').each(function() {
+				var url = $(this).attr('href');
+				//var nombre = $(this).text();
+				var testNombre = 'test';
+				var nombreUno = $(this).text().toString();
+				var nombreSinEspacios = nombreUno.replace(/\t/g, "")
+					.replace(/\n/g, "")
+					.trim()
+					.replace(/ /g, '_');
+				request(url, function(err, resp, body) {
+					if (!err && resp.statusCode == 200) {
+						var $ = cheerio.load(body);
+						var correo = "";
+						var telefono = "";
+						var formacion = "";
+						//nombre
+						$('span.nombre_funcionario').each(function() {
+							var datos = $(this).last().text();
+							//console.log('Nombre: ' + JSON.stringify(datos));
+							nombre = datos;
+						});
+						//correo y teléfono
+						$('span.texto_detalle_directorio').each(function() {
+							var datos = $(this).last().text();
+							personaArray.push(datos);
+						});
+						// formacion académica
+						$('ul').each(function() {
+							//var url =  $(this).attr('href');
+							var datos = $(this).last().text();
+							formacionArray.push(datos);
+						});
+
+						correo = personaArray[0];
+						telefono = personaArray[1];
+						formacionAcademica = formacionArray[2];
+
+						utils.addPersonasToDB(nombre, correo, telefono, 'otro');
+						request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+
+						personaArray.length = 0;
+						formacionArray.length = 0;
+					}
+
+				});
+
+			});
+			next();
+		});
+		/*walker.on('end', function() {
+			console.log(files);
+		});*/
+		return res.view('procuraduria');
+		//test();
+		} catch (e) {
+			console.log('Error: ' + e)
+		}
+
+		
+	},
+
 	//para analizar los archivos locales descargados de la Contraloria (de manera individual)
 	analizar: function(req, res) {
 
@@ -43,12 +122,12 @@ module.exports = {
 			if (!err && resp.statusCode == 200) {
 				//console.log('body ' + JSON.stringify(body));
 				var $ = cheerio.load(body);
-				console.log('$ ' + JSON.stringify($)); 
+				console.log('$ ' + JSON.stringify($));
 
 				$('b').each(function() {
 					//var url =  $(this).attr('href');
 					var url = $(this).text();
-					console.log('Texto: ' + JSON.stringify(url));					
+					console.log('Texto: ' + JSON.stringify(url));
 				});
 			} else {
 				console.log('error en la descarga');
@@ -162,76 +241,7 @@ module.exports = {
 				linksArray.push(url);*/
 		});
 
-	},
-
-	descargaHtmls: function(req, res) {
-		//var test = function(){
-		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
-
-		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
-			followLinks: false
-		});
-		var i = 1;
-
-		walker.on('file', function(root, stat, next) {
-			//filesArray.push(root + '/' + stat.name);
-			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
-
-			$('a[ctype=c]').each(function() {
-				var url = $(this).attr('href');
-				//var nombre = $(this).text();
-				var testNombre = 'test';
-				var nombreUno = $(this).text().toString();
-				var nombreSinEspacios = nombreUno.replace(/\t/g, "")
-					.replace(/\n/g, "")
-					.trim()
-					.replace(/ /g, '_'); 
-				request(url, function(err, resp, body) {
-					if (!err && resp.statusCode == 200) {
-						var $ = cheerio.load(body);
-						var correo = "";
-						var telefono = "";
-						var formacion = "";
-						//nombre
-						$('span.nombre_funcionario').each(function() {
-							var datos = $(this).last().text();
-							//console.log('Nombre: ' + JSON.stringify(datos));
-							nombre = datos;
-						});
-						//correo y teléfono
-						$('span.texto_detalle_directorio').each(function() {
-							var datos = $(this).last().text();
-							personaArray.push(datos);
-						});
-						// formacion académica
-						$('ul').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							formacionArray.push(datos);
-						});
-						
-						correo = personaArray[0];
-						telefono = personaArray[1];
-						formacionAcademica = formacionArray[2];
-
-						utils.addPersonasToDB(nombre, correo, telefono, 'otro');
-						request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
-
-						personaArray.length = 0;
-						formacionArray.length = 0;
-					}
-
-				});
-
-			});
-			next();
-		});
-
-		/*walker.on('end', function() {
-			console.log(files);
-		});*/
-		return res.view('procuraduria');
-		//test();
 	}
+
 
 };

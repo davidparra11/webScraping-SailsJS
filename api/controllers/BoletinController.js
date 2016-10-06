@@ -12,7 +12,7 @@ var request = require('request'),
 	regex = new Regex(/(a|b)*abb/),
 	boletinArray = [],
 	boletinArrayHtml = [],
-	urls = [],	
+	urls = [],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
@@ -57,12 +57,20 @@ module.exports = {
 	 */
 	boletinesNuevos: function(req, res) {
 
-		console.log('Recurso para tomar datos de todos ('+ process.env.NUM_RESULT_PROCU_NUEVOS +')los boletines del 2011 hacia adelante.');
+		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
 		contador = 1;
 		boletinesNuevosError = [];
 		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
 		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
 		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+
+		var numeroResultados;
+		try {
+			numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+		} catch (e) {
+			console.error('variable no definida: ' + e);
+			return;
+		}
 
 		for (var key in onceArray) {
 			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
@@ -187,14 +195,18 @@ module.exports = {
 		var boletinesFalsos = [];
 		//var i = 1;
 		//var totContador = 920;
-		bucleContador(cantBoletinesArray[y], y);
-		if (y > 6) {
-			return;
+
+		try {
+			bucleContador(cantBoletinesArray[y], y);
+		} catch (e) {
+			console.log('Error: ' + e);
+		} finally {
+			//return res.view('procuraduria2010');			
 		}
 
 		function bucleContador(totContador, llave) {
 			if (y > 6) {
-				return;
+				return true;
 			}
 			//console.log('totContador: ' + totContador + 'llave: ' + llave);
 			if (i === undefined)
@@ -208,6 +220,8 @@ module.exports = {
 			i++;
 			////console.log('hol mundo' + totContador + 'llave: ' + llave);
 			loopBoletin(i, llave);
+
+
 		}
 
 		function loopBoletin(i, llave) {
@@ -343,7 +357,7 @@ module.exports = {
 
 		if (!req.param("boletin")) {
 			return res.send(400, "el valor de 'boletin' no se ha introducido.");
-		}	
+		}
 
 		//console.log('se inició la funcion para analizr los boletines del 2010 hacia atrás. ');
 		var numBoletin = req.param("boletin");
