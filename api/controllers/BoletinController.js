@@ -62,9 +62,7 @@ module.exports = {
 		boletinesNuevosError = [];
 		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
 		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
-		//var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
-		console.log(process.env.NUM_RESULT_PROCU_NUEVOS);
-		var numeroResultados = 25;
+		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
 
 		for (var key in onceArray) {
 			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
@@ -186,9 +184,6 @@ module.exports = {
 	boletinesAntiguos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
-		// la variable de entorno selecciona el array de prueba, o el numero total de boletines antiguos
-		
-
 		var boletinesFalsos = [];
 		//var i = 1;
 		//var totContador = 920;
