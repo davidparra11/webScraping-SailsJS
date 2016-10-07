@@ -18,7 +18,9 @@ module.exports = {
 			primaryKey: true
 		},
 		nombre: {
-			type: 'string'
+			type: 'string',
+			unique: true,
+			size: 120
 		},
 		correo: {
 			type: 'string'
