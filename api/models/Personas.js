@@ -19,7 +19,6 @@ module.exports = {
 		},
 		nombre: {
 			type: 'string',
-			unique: true,
 			size: 120
 		},
 		correo: {
