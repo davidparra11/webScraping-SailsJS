@@ -49,6 +49,17 @@ module.exports.connections = {
   },
 
  
+  sqlserver: {
+    adapter: 'sails-sqlserver',
+    user: 'cnect',
+    password: 'pass',
+    host: 'abc123.database.windows.net' // azure database 
+    database: 'mydb',
+    options: {
+      encrypt: true   // use this for Azure databases 
+    }
+  }
+
 
 
   /***************************************************************************
