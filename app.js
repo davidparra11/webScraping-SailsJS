@@ -53,6 +53,19 @@ process.chdir(__dirname);
     }
   }
 
+    var dotenv;
+  try {
+    dotenv = require('dotenv');
+    dotenv.load();
+  } catch (e) {
+    console.error('error Run .env');
+    
+    return;
+  }
+  
+
+
+
 
   // Start server
   sails.lift(rc('sails'));

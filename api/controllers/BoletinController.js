@@ -13,8 +13,6 @@ var request = require('request'),
 	boletinArray = [],
 	boletinArrayHtml = [],
 	urls = [],
-	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
@@ -23,7 +21,7 @@ var request = require('request'),
 	//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
 	linksArray = [],
 	utils = require('../utlities/Util');
-
+//Hola
 const util = require('util');
 var unorm = require('unorm');
 var iconv = require('iconv-lite');
@@ -31,6 +29,9 @@ var y = 0;
 var moment = require('moment');
 var now = moment();
 var testDate = require('date-utils').language("es");
+
+//var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+//var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
 
 var month = new Array();
 month[0] = "Jan";
@@ -46,6 +47,15 @@ month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
 
+switch (process.env.SELEC_ARRAY) {
+			case 1:
+				cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
+				break;
+			case 2:
+				cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+		}
+
+
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 
 module.exports = {
@@ -55,12 +65,23 @@ module.exports = {
 	 */
 	boletinesNuevos: function(req, res) {
 
-		console.log('Recurso para tomar datos de todos los boletines del 2011 hacia adelante.');
+		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
 		contador = 1;
 		boletinesNuevosError = [];
+		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
+		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
+		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+
+		var numeroResultados;
+		try {
+			numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+		} catch (e) {
+			console.error('variable no definida: ' + e);
+			return;
+		}
 
 		for (var key in onceArray) {
-			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=25&first_result=0';
+			var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
 			request(direccionWeb, function(err, resp, body) {
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(body);
@@ -179,19 +200,21 @@ module.exports = {
 	boletinesAntiguos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
-
 		var boletinesFalsos = [];
 		//var i = 1;
 		//var totContador = 920;
 
-		bucleContador(cantBoletinesArray[y], y);
-		if (y > 6) {
-			return;
+		try {
+			bucleContador(cantBoletinesArray[y], y);
+		} catch (e) {
+			console.log('Error: ' + e);
+		} finally {
+			//return res.view('procuraduria2010');			
 		}
 
 		function bucleContador(totContador, llave) {
 			if (y > 6) {
-				return;
+				return true;
 			}
 			//console.log('totContador: ' + totContador + 'llave: ' + llave);
 			if (i === undefined)
@@ -205,6 +228,8 @@ module.exports = {
 			i++;
 			////console.log('hol mundo' + totContador + 'llave: ' + llave);
 			loopBoletin(i, llave);
+
+
 		}
 
 		function loopBoletin(i, llave) {
