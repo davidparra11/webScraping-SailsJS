@@ -40,7 +40,7 @@ module.exports.connections = {
   * Run: npm install sails-mysql                                             *
   *                                                                          *
   ***************************************************************************/
-  someMysqlServer: {
+/*  someMysqlServer: {
     adapter: 'sails-mysql',
     host: 'localhost',
     user: 'root',
@@ -48,7 +48,7 @@ module.exports.connections = {
     database: 'sidifdb'
   },
 
- /*
+*/ 
   sqlserver: {
     adapter: 'sails-sqlserver',
     user: 'cnect',
@@ -59,7 +59,7 @@ module.exports.connections = {
       encrypt: true   // use this for Azure databases 
     }
   }
-*/
+
 
 
   /***************************************************************************
