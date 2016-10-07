@@ -31,8 +31,8 @@ module.exports = {
 	 * método que recupera las HVs de los contratistas, los pasa a HTML y guarda datos importantes en DB.
 	 */
 	descargaHtmls: function(req, res) {
-		//var test = function(){
-		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
+		
+		console.log('Recurso para tomar datos de las personas en la página Contraloria y crear archivos HTML...');
 
 		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
 			followLinks: false
@@ -41,7 +41,6 @@ module.exports = {
 
 		try {
 			walker.on('file', function(root, stat, next) {
-			//filesArray.push(root + '/' + stat.name);
 			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
 
 			$('a[ctype=c]').each(function() {
@@ -81,7 +80,7 @@ module.exports = {
 						telefono = personaArray[1];
 						formacionAcademica = formacionArray[2];
 
-						utils.addPersonasToDB(nombre, correo, telefono, 'otro');
+						utils.addPersonasToDB(nombre, correo, telefono, 'otro', nombreSinEspacios);
 						request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
 
 						personaArray.length = 0;
