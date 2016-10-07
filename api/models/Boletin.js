@@ -25,7 +25,7 @@ module.exports = {
             size: 100
         },
         textoCompleto: {
-            type: 'string',
+            type: 'string', //varchar(max)
             size: 10000
         },
         textoUnoDos: {
