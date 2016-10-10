@@ -56,7 +56,7 @@ module.exports.connections = {
     port: '1433',
     user: 'sa',
     password: 'Sa12345*',
-    host: 'hp'+ '\u005C' + 'sqlexpress',
+    host: 'sergiopttil'+ '\u005C' + 'sql2008r2',
     database: 'sidifdb',
     options: {
                 //encrypt: true // Use this if you're on Windows Azure

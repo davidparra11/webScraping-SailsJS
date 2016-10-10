@@ -7,7 +7,7 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	direccionLocal = 'C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/',
+	direccionLocal = 'C:/Users/Sergio/Documents/Sidif/Desarrollo/Software/NodeJs/sidif/Contraloria/',
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
 	year = 2010,
@@ -128,6 +128,8 @@ module.exports = {
 
 							utils.addPersonasToDB(nombre, relacionadoCon, direccion, fecha, ingresaLista, nombre);
 
+							request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+							
 							correo = personaArray[0];
 							telefono = personaArray[1];
 							formacionAcademica = formacionArray[2];

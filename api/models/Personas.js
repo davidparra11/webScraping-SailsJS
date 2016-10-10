@@ -21,7 +21,8 @@ module.exports = {
 			defaultsTo: 'CONTRATISTAS DEL ESTADO'
 		},
 		CODIGO: {
-			type: 'TMP12345678'
+			type: 'string',
+			defaultsTo: 'TMP12345678'
 		},
 		NOMBRECOMPLETO: {
 			type: 'string'
