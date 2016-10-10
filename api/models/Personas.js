@@ -12,31 +12,81 @@ module.exports = {
 	autoUpdatedAt: false,
 
 	attributes: {
-		id: {
-			type: 'integer',
-			autoIncrement: true,
-			primaryKey: true
-		},
-		nombre: {
+		ORIGEN_LISTA: {
 			type: 'string',
-			size: 120
+			defaultsTo: 'COLOMBIA'
 		},
-		correo: {
+		TIPO_LISTA: {
+			type: 'string',
+			defaultsTo: 'CONTRATISTAS DEL ESTADO'
+		},
+		CODIGO: {
+			type: 'TMP12345678'
+		},
+		NOMBRECOMPLETO: {
 			type: 'string'
 		},
-		telefono: {
+		PRIMER_NOMBRE: {
+			type: 'string',
+		},
+		SEGUNDO_NOMBRE: {
 			type: 'string'
 		},
-		otro: {
-			type: 'string',
-			size: 4000
+		PRIMER_APELLIDO: {
+			type: 'string'
 		},
-		creationDate: {
-			columnName: 'cre_dt',
-			type: 'datetime',
-			defaultsTo: function() {
-				return new Date();
-			}
-		}
+		SEGUNDO_APELLIDO: {
+			type: 'string'
+		},
+		TIPO_PERSONA: {
+			type: 'string',
+			defaultsTo: 'INDIVIDUO' //defaultsTo: 'COLOMBIA'
+		},
+		TIPO_ID: {
+			type: 'string',
+			defaultsTo: 'CC'
+		},
+		ID: {
+			type: 'string'
+		},
+		RELACIONADO_CON: {
+			type: 'string'
+		},
+		ROL_O_DESCRIPCION1: {
+			type: 'string'
+		},
+		ROL_O_DESCRIPCION2: {
+			type: 'string'
+		},
+		AKA: {
+			type: 'string'
+		},
+		FUENTE: {
+			type: 'string',
+			defaultsTo: 'HTTP://WWW.CONTRALORIAGEN.GOV.CO'
+		},
+		FECHA_UPDATE: {
+			columnName: 'FECHA_UPDATE',
+			type: 'string',
+		},
+		FECHA_FINAL_ROL: {
+			type: 'string'
+		},		
+		NACIONALIDAD_PAISDEORIGEN: {
+			type: 'string',
+			defaultsTo: 'COLOMBIA' 
+		},
+		DIRECCION: {
+			type: 'string',
+		},
+		ESTADO: {
+			type: 'string'
+		},
+		LLAVEIMAGEN: {
+			type: 'string'
+		},
+		REGISTRO: {
+			type: 'integer'
+		},
 	}
 };

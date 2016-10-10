@@ -34,26 +34,27 @@ module.exports = {
 		//return true;       
 	},
 	//Funcion para agregar los datos de las Hojas de Vida de los contratistas a la Base de Datos.
-	addPersonasToDB: function(nombre, correo, telefono, otro, infoBoletin) {
+	addPersonasToDB: function(nombreCompleto, relacionadoCon, direccion, fechaUpdate, estado, infoBoletin) {
 
 		var x = {
-			nombre: nombre,
-			correo: correo,
-			telefono: telefono,
-			otro: otro
+			NOMBRECOMPLETO: nombreCompleto,			
+			RELACIONADO_CON: relacionadoCon,
+			DIRECCION: direccion,
+			FECHA_UPDATE: fechaUpdate,
+			ESTADO: estado,
 		};		
 		Personas.create(x)
 			.exec(function(error, persona) {
 				//console.log(boletin);
 				if (error) {
-					console.log('error DB con: ' + infoBoletin);
+					console.log('error DB con: ' + infoBoletin + 'ERror: ' + error);
 					return true;
 				} else {
 					console.log('OK, DB.');
 					return true;
 				}
 			}); 
-		//return true;  
+		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
 	}
 
 }
