@@ -73,6 +73,7 @@ htmls
 htmlBoletines/*.html
 pdfBoletines
 imgBoletines
+Contraloria
 
 ################################################
 # Sails.js / Waterline / Grunt
