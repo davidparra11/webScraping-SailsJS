@@ -55,6 +55,26 @@ module.exports = {
 				}
 			}); 
 		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
+	},
+
+	
+	addLinksToDB: function(link, infoLink) {
+
+		var x = {
+			link: link
+		};		
+		Links.create(x)
+			.exec(function(error, persona) {
+				//console.log(boletin);
+				if (error) {
+					console.log('error DB con: ' + infoLink + 'ERror: ' + error);
+					return true;
+				} else {
+					console.log('OK, DB.');
+					return true;
+				}
+			}); 
+		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
 	}
 
 }
