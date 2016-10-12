@@ -41,7 +41,7 @@ module.exports.connections = {
   *                                                                          *
   ***************************************************************************/
  
-  defaultConnection: {
+  mySql: {
     adapter: 'sails-mysql',
     host: 'localhost',
     user: 'root',
@@ -49,9 +49,9 @@ module.exports.connections = {
     database: 'sidifdb'
   },
 
- /*
  
-  defaultConnection: {
+ 
+  sqlServer: {
     adapter: 'sails-sqlserver',
     port: '1433',
     user: 'sa',
@@ -64,7 +64,7 @@ module.exports.connections = {
                 // port: 1444
 
             }
-  }*/
+  }/**/
 
 
 
