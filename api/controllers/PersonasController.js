@@ -98,15 +98,20 @@ module.exports = {
 
 							lugar_nacimiento = nacimientoArray[21];
 
+							try {
+								if (lugar_nacimiento.length == 18) {
+									lugar_nacimiento = nacimientoArray[18];
+								}
+
+							} catch (exception) {
+								console.log(exception);
+							}
+							
 							relacionadoConDefault = 'CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, ';
 
 							relacionadoCon = relacionadoConDefault + institucion_funcionario + ' ' + lugar_nacimiento + ', ' + cargo;
 
 							direccion = lugar_nacimiento;
-
-							//utils.addPersonasToDB(nombre, relacionadoCon, direccion, nombre);
-
-							
 
 							fechaHoy = new Date();
 
@@ -120,8 +125,6 @@ module.exports = {
 							console.log('Fecha: ' + fecha);
 							console.log('fechaHoy: ' + fechaHoy);
 
-							//console.log('Lugar de nacimiento: ' + JSON.stringify(nacimientoArray[21]));
-
 							console.log('RelacionadoCon: ' + relacionadoCon);
 
 							var ingresaLista = 'INGRESA_LISTA: ' + fecha;
@@ -129,14 +132,13 @@ module.exports = {
 							utils.addPersonasToDB(nombre, relacionadoCon, direccion, fecha, ingresaLista, nombre);
 
 							request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
-							
+
 							correo = personaArray[0];
 							telefono = personaArray[1];
 							formacionAcademica = formacionArray[2];
 
 							formacionArray.length = 0;
 							nacimientoArray.length = 0;
-
 						}
 
 					});
@@ -214,9 +216,9 @@ module.exports = {
 
 	personaContraloria: function(req, res) {
 
-		console.log('personaContrlaoria recurso...');
+		console.log('personaContrlaoria recurso...'); //http://www.sigep.gov.co/hdv/-/directorio/M571786-0896-4/view
 
-		var direccionWeb = 'http://www.sigep.gov.co/hdv/-/directorio/M571786-0896-4/view';
+		var direccionWeb = 'http://www.sigep.gov.co/hdv/-/directorio/M499680-0296-5/view'; //
 		request(direccionWeb, function(err, resp, body) {
 			//console.log('resp ' + JSON.stringify(resp.statusCode));21
 
@@ -257,10 +259,18 @@ module.exports = {
 				$('span').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
+					console.log('Span: ' + datos);
 					nacimientoArray.push(datos);
 				});
 
 				lugar_nacimiento = nacimientoArray[21];
+
+				if (lugar_nacimiento.length == 18) {
+					lugar_nacimiento = nacimientoArray[18];
+				}
+
+
+				console.log('longitud: ' + lugar_nacimiento.length);
 
 				relacionadoConDefault = 'CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, ';
 
@@ -268,7 +278,7 @@ module.exports = {
 
 				//utils.addPersonasToDB(nombre, relacionadoCon, direccion);
 
-				console.log('Lugar de nacimiento: ' + JSON.stringify(nacimientoArray[21]));
+				console.log('Lugar de nacimiento: ' + JSON.stringify(lugar_nacimiento));
 
 				console.log('RelacionadoCon: ' + relacionadoCon);
 

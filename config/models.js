@@ -27,7 +27,7 @@ module.exports.models = {
   * See http://sailsjs.org/#!/documentation/concepts/ORM/model-settings.html  *
   *                                                                          *
   ***************************************************************************/
-    migrate: 'safe',  //safe - alter  - drop 
+    migrate: 'alter',  //safe - alter  - drop 
 
     //connection : 'productionPosgrest',
     //schema     : false,             // habilita el uso de esquemas en DB

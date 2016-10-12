@@ -40,7 +40,7 @@ module.exports.connections = {
   * Run: npm install sails-mysql                                             *
   *                                                                          *
   ***************************************************************************/
- /*
+ 
   defaultConnection: {
     adapter: 'sails-mysql',
     host: 'localhost',
@@ -49,7 +49,7 @@ module.exports.connections = {
     database: 'sidifdb'
   },
 
- */
+ /*
  
   defaultConnection: {
     adapter: 'sails-sqlserver',
@@ -64,7 +64,7 @@ module.exports.connections = {
                 // port: 1444
 
             }
-  }
+  }*/
 
 
 
