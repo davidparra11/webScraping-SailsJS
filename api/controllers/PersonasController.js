@@ -19,6 +19,7 @@ var request = require('request'),
 	personaArray = [],
 	formacionArray = [],
 	nacimientoArray = [],
+	util = require('util'),
 	utils = require('../utlities/Util');
 
 var walk = require('walk');
@@ -54,6 +55,9 @@ module.exports = {
 						.replace(/\n/g, "")
 						.trim()
 						.replace(/ /g, '_');
+					//var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
+					var waitTill = new Date(new Date().getTime() + 500);
+					while (waitTill > new Date()) {}
 					request(url, function(err, resp, body) {
 						if (!err && resp.statusCode == 200) {
 							var $ = cheerio.load(body);
@@ -106,7 +110,7 @@ module.exports = {
 							} catch (exception) {
 								console.log(exception);
 							}
-							
+
 							relacionadoConDefault = 'CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, ';
 
 							relacionadoCon = relacionadoConDefault + institucion_funcionario + ' ' + lugar_nacimiento + ', ' + cargo;
@@ -116,22 +120,48 @@ module.exports = {
 							fechaHoy = new Date();
 
 							var dia = ("0" + fechaHoy.getDate()).slice(-2);
-							var mes = ("0" + (fechaHoy.getMonth() + 1)).slice(-2)
+							var mes = ("0" + (fechaHoy.getMonth() + 1)).slice(-2);
 							var anio = fechaHoy.getFullYear();
 
 							fecha = anio + '' + mes + '' + dia;
 
 
-							console.log('Fecha: ' + fecha);
-							console.log('fechaHoy: ' + fechaHoy);
+							//console.log('Fecha: ' + fecha);
+							//console.log('fechaHoy: ' + fechaHoy);
 
-							console.log('RelacionadoCon: ' + relacionadoCon);
+							//console.log('RelacionadoCon: ' + relacionadoCon);
 
 							var ingresaLista = 'INGRESA_LISTA: ' + fecha;
 
 							utils.addPersonasToDB(nombre, relacionadoCon, direccion, fecha, ingresaLista, nombre);
 
-							request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+
+							//request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+							var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
+
+							request
+								.get({
+									uri: url
+								})
+								.on('error', function(err) {
+									console.log('ERRORS REQUEST: ' + err + 'URL: ' + url);
+									console.log('My dish error: ', util.inspect(err, {
+										showHidden: true,
+										depth: 2
+									}));
+								})
+								.pipe(writeStream); /* */
+
+							//writeStream.close();
+
+							/*	var input, request;
+
+
+								input = fs.createReadStream(url);
+								request = closureRequest(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+								input.pipe(request);*/
+
+							// create request objects
 
 							correo = personaArray[0];
 							telefono = personaArray[1];
@@ -141,7 +171,7 @@ module.exports = {
 							nacimientoArray.length = 0;
 						}
 
-					});
+					}); //.pipe(writeStream);//
 
 				});
 				next();
@@ -154,6 +184,7 @@ module.exports = {
 		} catch (e) {
 			console.log('Error: ' + e)
 		}
+
 
 
 	},
@@ -331,6 +362,7 @@ module.exports = {
 		});
 
 	}
+
 
 
 };
