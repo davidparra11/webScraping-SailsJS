@@ -7,7 +7,7 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	direccionLocal = 'C:/Users/HP 14 V014/Desktop/Contratistas/Contratistas/busquedas.dafp.gov.co/',
+	direccionLocal = 'C:/Users/Sergio/Documents/Sidif/Desarrollo/Software/NodeJs/sidif/Contraloria/',
 	onceArray = [8, 9, 10, 11, 12, 13],
 	i = 1,
 	year = 2010,
@@ -15,8 +15,10 @@ var request = require('request'),
 	direccionWebContraloria = 'http://www.sigep.gov.co/hdv/-/directorio/M748256-0262-4/view',
 	Regex = require("regex"),
 	linksArray = [],
+	nombreArray = [],
 	personaArray = [],
 	formacionArray = [],
+	nacimientoArray = [],
 	utils = require('../utlities/Util');
 
 var walk = require('walk');
@@ -31,8 +33,8 @@ module.exports = {
 	 * método que recupera las HVs de los contratistas, los pasa a HTML y guarda datos importantes en DB.
 	 */
 	descargaHtmls: function(req, res) {
-		//var test = function(){
-		console.log('Recurso para tomar datos de las personas en la pagina Contraloria y crear archivos HTML...');
+
+		console.log('Recurso para tomar datos de las personas en la página Contraloria y crear archivos HTML...');
 
 		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
 			followLinks: false
@@ -41,68 +43,119 @@ module.exports = {
 
 		try {
 			walker.on('file', function(root, stat, next) {
-			//filesArray.push(root + '/' + stat.name);
-			var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
+				var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
 
-			$('a[ctype=c]').each(function() {
-				var url = $(this).attr('href');
-				//var nombre = $(this).text();
-				var testNombre = 'test';
-				var nombreUno = $(this).text().toString();
-				var nombreSinEspacios = nombreUno.replace(/\t/g, "")
-					.replace(/\n/g, "")
-					.trim()
-					.replace(/ /g, '_');
-				request(url, function(err, resp, body) {
-					if (!err && resp.statusCode == 200) {
-						var $ = cheerio.load(body);
-						var correo = "";
-						var telefono = "";
-						var formacion = "";
-						//nombre
-						$('span.nombre_funcionario').each(function() {
-							var datos = $(this).last().text();
-							//console.log('Nombre: ' + JSON.stringify(datos));
-							nombre = datos;
-						});
-						//correo y teléfono
-						$('span.texto_detalle_directorio').each(function() {
-							var datos = $(this).last().text();
-							personaArray.push(datos);
-						});
-						// formacion académica
-						$('ul').each(function() {
-							//var url =  $(this).attr('href');
-							var datos = $(this).last().text();
-							formacionArray.push(datos);
-						});
+				$('a[ctype=c]').each(function() {
+					var url = $(this).attr('href');
+					//var nombre = $(this).text();
+					var testNombre = 'test';
+					var nombreUno = $(this).text().toString();
+					var nombreSinEspacios = nombreUno.replace(/\t/g, "")
+						.replace(/\n/g, "")
+						.trim()
+						.replace(/ /g, '_');
+					request(url, function(err, resp, body) {
+						if (!err && resp.statusCode == 200) {
+							var $ = cheerio.load(body);
+							var fecha = "";
+							var cargo = "";
+							var institucion_funcionario = "";
+							var lugar_nacimiento = "";
+							//nombre
+							$('span.nombre_funcionario').each(function() {
+								//var url =  $(this).attr('href');
+								var datos = $(this).last().text();
+								console.log('Nombre: ' + JSON.stringify(datos));
+								nombre = datos.toUpperCase();
+							});
+							//cargo funcionario
+							$('span.cargo_funcionario').each(function() {
+								//var url =  $(this).attr('href');
+								var datos = $(this).last().text();
+								//console.log('cargo: ' + JSON.stringify(datos));
+								cargo = datos;
+							});
+							//Entidad
+							$('span.institucion_funcionario').each(function() {
+								//var url =  $(this).attr('href');
+								var datos = $(this).last().text();
+								//console.log('institucion_funcionario: ' + JSON.stringify(datos));
+								institucion_funcionario = datos;
+							});
+							// formacion académica
+							$('ul').each(function() {
+								//var url =  $(this).attr('href');
+								var datos = $(this).last().text();
+								///console.log('Formacion Académica: ' + JSON.stringify(datos));
+								formacionArray.push(datos);
+							});
+							// Lugar de nacimiento
+							$('span').each(function() {
+								//var url =  $(this).attr('href');
+								var datos = $(this).last().text();
+								nacimientoArray.push(datos);
+							});
 
-						correo = personaArray[0];
-						telefono = personaArray[1];
-						formacionAcademica = formacionArray[2];
+							lugar_nacimiento = nacimientoArray[21];
 
-						utils.addPersonasToDB(nombre, correo, telefono, 'otro');
-						request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+							try {
+								if (lugar_nacimiento.length == 18) {
+									lugar_nacimiento = nacimientoArray[18];
+								}
 
-						personaArray.length = 0;
-						formacionArray.length = 0;
-					}
+							} catch (exception) {
+								console.log(exception);
+							}
+							
+							relacionadoConDefault = 'CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, ';
+
+							relacionadoCon = relacionadoConDefault + institucion_funcionario + ' ' + lugar_nacimiento + ', ' + cargo;
+
+							direccion = lugar_nacimiento;
+
+							fechaHoy = new Date();
+
+							var dia = ("0" + fechaHoy.getDate()).slice(-2);
+							var mes = ("0" + (fechaHoy.getMonth() + 1)).slice(-2)
+							var anio = fechaHoy.getFullYear();
+
+							fecha = anio + '' + mes + '' + dia;
+
+
+							console.log('Fecha: ' + fecha);
+							console.log('fechaHoy: ' + fechaHoy);
+
+							console.log('RelacionadoCon: ' + relacionadoCon);
+
+							var ingresaLista = 'INGRESA_LISTA: ' + fecha;
+
+							utils.addPersonasToDB(nombre, relacionadoCon, direccion, fecha, ingresaLista, nombre);
+
+							request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
+
+							correo = personaArray[0];
+							telefono = personaArray[1];
+							formacionAcademica = formacionArray[2];
+
+							formacionArray.length = 0;
+							nacimientoArray.length = 0;
+						}
+
+					});
 
 				});
-
+				next();
 			});
-			next();
-		});
-		/*walker.on('end', function() {
-			console.log(files);
-		});*/
-		return res.view('procuraduria');
-		//test();
+			/*walker.on('end', function() {
+				console.log(files);
+			});*/
+			return res.view('procuraduria');
+			//test();
 		} catch (e) {
 			console.log('Error: ' + e)
 		}
 
-		
+
 	},
 
 	//para analizar los archivos locales descargados de la Contraloria (de manera individual)
@@ -163,15 +216,17 @@ module.exports = {
 
 	personaContraloria: function(req, res) {
 
-		var direccionWeb = 'http://www.sigep.gov.co/hdv/-/directorio/M571786-0896-4/view';
+		console.log('personaContrlaoria recurso...'); //http://www.sigep.gov.co/hdv/-/directorio/M571786-0896-4/view
+
+		var direccionWeb = 'http://www.sigep.gov.co/hdv/-/directorio/M499680-0296-5/view'; //
 		request(direccionWeb, function(err, resp, body) {
-			//console.log('resp ' + JSON.stringify(resp.statusCode));
+			//console.log('resp ' + JSON.stringify(resp.statusCode));21
 
 			if (!err && resp.statusCode == 200) {
 				var $ = cheerio.load(body);
-				var correo = "";
-				var telefono = "";
-				var formacion = "";
+				var cargo = "";
+				var institucion_funcionario = "";
+				var lugar_nacimiento = "";
 				//nombre
 				$('span.nombre_funcionario').each(function() {
 					//var url =  $(this).attr('href');
@@ -179,20 +234,54 @@ module.exports = {
 					console.log('Nombre: ' + JSON.stringify(datos));
 					nombre = datos;
 				});
-				//correo y teléfono
-				$('span.texto_detalle_directorio').each(function() {
+				//cargo funcionario
+				$('span.cargo_funcionario').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('correo: ' + JSON.stringify(datos));
-					personaArray.push(datos);
+					console.log('cargo: ' + JSON.stringify(datos));
+					cargo = datos;
+				});
+				//Entidad
+				$('span.institucion_funcionario').each(function() {
+					//var url =  $(this).attr('href');
+					var datos = $(this).last().text();
+					console.log('institucion_funcionario: ' + JSON.stringify(datos));
+					institucion_funcionario = datos;
 				});
 				// formacion académica
 				$('ul').each(function() {
 					//var url =  $(this).attr('href');
 					var datos = $(this).last().text();
-					console.log('Formacion Académica: ' + JSON.stringify(datos));
+					///console.log('Formacion Académica: ' + JSON.stringify(datos));
 					formacionArray.push(datos);
 				});
+				// Lugar de nacimiento
+				$('span').each(function() {
+					//var url =  $(this).attr('href');
+					var datos = $(this).last().text();
+					console.log('Span: ' + datos);
+					nacimientoArray.push(datos);
+				});
+
+				lugar_nacimiento = nacimientoArray[21];
+
+				if (lugar_nacimiento.length == 18) {
+					lugar_nacimiento = nacimientoArray[18];
+				}
+
+
+				console.log('longitud: ' + lugar_nacimiento.length);
+
+				relacionadoConDefault = 'CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, ';
+
+				relacionadoCon = relacionadoConDefault + institucion_funcionario + ' ' + lugar_nacimiento + ', ' + cargo;
+
+				//utils.addPersonasToDB(nombre, relacionadoCon, direccion);
+
+				console.log('Lugar de nacimiento: ' + JSON.stringify(lugar_nacimiento));
+
+				console.log('RelacionadoCon: ' + relacionadoCon);
+
 
 				correo = personaArray[0];
 				telefono = personaArray[1];

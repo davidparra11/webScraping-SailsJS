@@ -40,7 +40,7 @@
 ################################################
 
 config/local.js
-
+config/connections.js
 
 
 
@@ -73,6 +73,7 @@ htmls
 htmlBoletines/*.html
 pdfBoletines
 imgBoletines
+Contraloria
 
 ################################################
 # Sails.js / Waterline / Grunt

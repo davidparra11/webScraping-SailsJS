@@ -30,7 +30,7 @@ var moment = require('moment');
 var now = moment();
 var testDate = require('date-utils').language("es");
 
-var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+//var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
 //var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
 
 var month = new Array();
@@ -46,6 +46,14 @@ month[8] = "Sep";
 month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
+
+switch (process.env.SELEC_ARRAY) {
+			case 1:
+				cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
+				break;
+			case 2:
+				cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+		}
 
 
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
