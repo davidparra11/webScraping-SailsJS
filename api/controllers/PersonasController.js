@@ -138,20 +138,27 @@ module.exports = {
 
 
 							//request(url).pipe(fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html'));
-							var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
+							try {
+								var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
 
-							request
-								.get({
-									uri: url
-								})
-								.on('error', function(err) {
-									console.log('ERRORS REQUEST: ' + err + 'URL: ' + url);
-									console.log('My dish error: ', util.inspect(err, {
-										showHidden: true,
-										depth: 2
-									}));
-								})
-								.pipe(writeStream); /* */
+								request
+									.get({
+										uri: url
+									})
+									.on('error', function(err) {
+										console.log('ERRORS REQUEST: ' + err + 'URL: ' + url);
+										console.log('My dish error: ', util.inspect(err, {
+											showHidden: true,
+											depth: 2
+										}));
+									})
+									.pipe(writeStream); /* */
+
+							} catch (exception) {
+								console.log(exception);
+							}
+
+
 
 							//writeStream.close();
 
