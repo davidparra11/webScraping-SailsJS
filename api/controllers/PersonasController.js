@@ -54,7 +54,8 @@ module.exports = {
 					var nombreSinEspacios = nombreUno.replace(/\t/g, "")
 						.replace(/\n/g, "")
 						.trim()
-						.replace(/ /g, '_');
+						.replace(/ /g, '_')
+						.replace('?', '');
 					//var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
 					var waitTill = new Date(new Date().getTime() + 500);
 					while (waitTill > new Date()) {}
