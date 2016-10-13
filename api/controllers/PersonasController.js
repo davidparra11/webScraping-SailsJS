@@ -55,7 +55,7 @@ module.exports = {
 						.replace(/\n/g, "")
 						.trim()
 						.replace(/ /g, '_')
-						.replace('?', '');
+						.replace(/\?/g, "red");
 					//var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
 					var waitTill = new Date(new Date().getTime() + 500);
 					while (waitTill > new Date()) {}
