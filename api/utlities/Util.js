@@ -1,7 +1,5 @@
-//"use strict"; //utils
-var request = require('request'),
-	cheerio = require('cheerio');
-
+var	util = require('util'); // Permite ampliar la información sobre los errores
+	
 module.exports = {
 	fechaHoy: function(){
 		var fechaHoy = new Date();
@@ -43,23 +41,6 @@ module.exports = {
 		//return true;       
 	},
 	
-	/*
-	  Descripción: Funcion para agregar los datos de las Hojas de Vida de los contratistas a la Base de Datos.
-	  persona : entidad json con los datos de la persona
-	 */
-	addPersonasToDB: function(persona) {
-		Personas.create(persona)
-			.exec(function(error, res) {
-				if (error) {
-					console.log('Error DB con: ' + persona.NOMBRECOMPLETO + 'Error: ' + error);
-					return false;
-				} else {
-					console.log('DB OK: ' + persona.NOMBRECOMPLETO);
-					return true;
-				}
-			}); 
-	},
-
 	
 	addLinksToDB: function(link, infoLink) {
 
@@ -78,6 +59,39 @@ module.exports = {
 				}
 			}); 
 		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
-	}
+	},
 
+	registrarError: function (err, url){
+		console.log('Error: ' + err + 'URL: ' + url);
+		console.log('Detalles: ', util.inspect(err, {
+			showHidden: true,
+			depth: 2
+		}));
+	},
+
+	eliminarCaracteresEspeciales: function (cadena, remplazarEspacioPorGuionBajo){
+		var res = cadena
+			.replace(/\t/g, "")
+			.replace(/\n/g, "")
+			.trim()
+			.toUpperCase()
+			.replace(/Ñ/g, 'N')
+			.replace(/\?/g, 'N')
+			.replace(/Á/g, 'A')
+			.replace(/É/g, 'E')
+			.replace(/Í/g, 'I')
+			.replace(/Ó/g, 'O')
+			.replace(/Ú/g, 'U')
+			;
+		if(remplazarEspacioPorGuionBajo)
+		{
+			return res.replace(/ /g, '_');
+		}
+		return res;
+	},
+	
+	sleep: function (ms){
+		var waitTill = new Date(new Date().getTime() + ms);
+		while (waitTill > new Date()) {}
+	}
 }
