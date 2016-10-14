@@ -31,48 +31,39 @@ var linkPersonasArray = [];
 module.exports = {
 
 	/**
-	 * método que recupera las HVs de los contratistas, los pasa a HTML y guarda datos importantes en DB.
+	 * método que muestra y guarda todos los Links de los archivos descargados de la DB.
 	 */
 	numeroLinks: function(req, res) {
 
-		console.log('Recurso para tomar datos de las personas en la página Contraloria y crear archivos HTML...');
+		console.log('Recurso para sacar el numero total de links de la Contraloria');
 
 		var walker = walk.walk(process.env.RUTA_CONTRATISTAS, { //busquedas.dafp.gov.co
 			followLinks: false
 		});
 		var i = 1;
-
 		try {
 			walker.on('file', function(root, stat, next) {
 				var $ = cheerio.load(fs.readFileSync(root + '/' + stat.name));
-
 				$('a[ctype=c]').each(function() {
 					var url = $(this).attr('href');
 					//var nombre = $(this).text();
+					i++;
 					var testNombre = 'test';
 					var nombreUno = $(this).text().toString();
 					var nombreSinEspacios = nombreUno.replace(/\t/g, "")
 						.replace(/\n/g, "")
 						.trim()
 						.replace(/ /g, '_');
-					//var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
-					utils.addLinksToDB(url, url);
-					//.pipe(writeStream);//
-
+						//agregar a la base de datos
+					//utils.addLinksToDB(url, url);
+					console.log('Contador: ' + i);
 				});
 				next();
 			});
-			/*walker.on('end', function() {
-				console.log(files);
-			});*/
 			return res.view('procuraduria');
-			//test();
 		} catch (e) {
-			console.log('Error: ' + e)
+			console.log('Error: ' + e);
 		}
-
-
-
 	}
 };
 
