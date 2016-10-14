@@ -17,7 +17,7 @@ gulp.task('server', function() {
 
 gulp.task('default', function() {
     gulp.run('server')
-    gulp.watch(['api/controllers/*.js', '*.html', '*.js'], function() {
+    gulp.watch(['api/controllers/*.js', '*.html', '*.js', 'api/utlities/*.js'], function() {
         gulp.run('server')
     });
 
