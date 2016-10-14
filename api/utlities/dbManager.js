@@ -10,7 +10,6 @@ module.exports = {
 					console.log('Error DB con: ' + persona.NOMBRECOMPLETO + 'Error: ' + error);
 					return false;
 				} else {
-					console.log('DB OK: ' + persona.NOMBRECOMPLETO);
 					return true;
 				}
 			}); 

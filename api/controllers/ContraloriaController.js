@@ -10,6 +10,8 @@ var request = require('request'), // Realiza las peticiones GET y POST asincrón
 	;
 
 var consecCodigo = 0;
+var totalBusqueda = 0;
+var archivoActual = 0;
 //Módulos que se van a hacer públicos
 module.exports = {
 
@@ -23,7 +25,9 @@ module.exports = {
 		
 		//lista los archivos de la ruta indicada
 		var dirs = fs.readdirSync(process.env.RUTA_CONTRATISTAS);
-		for (var i = 0 ; i<dirs.length; i++){
+		totalBusqueda = dirs.length;
+		for (var i = 0 ; i<totalBusqueda; i++){
+			archivoActual = i;
 			var root = './Contraloria';
 			interpretaHV(root, dirs[i]); 
 		}
@@ -38,14 +42,11 @@ module.exports = {
  */
 function interpretaHV(root, name) {
 	//Carga el archivo en operador $
-	console.log('Interpretando: ' + root + '/' + name)
 	var $ = cheerio.load(fs.readFileSync(root + '/' + name));
-
 	$('a[ctype=c]').each(function() {
 		var url = $(this).attr('href');
 		var nombreUno = $(this).text().toString();
-		utils.sleep(300);
-
+		utils.sleep(500);
 		var cuerpo = escribirArchivoHtml(nombreUno, url);
 	});
 }
@@ -63,6 +64,7 @@ function escribirArchivoHtml(nombreUno, urla){
 		request (urla, function(error, response, body){
 			if(!error && response.statusCode == 200){
 				var dataBd = extraerHvBd(body);
+				console.log(archivoActual + ' de ' + totalBusqueda);
 				dbManager.addPersonasToDB(dataBd);
 			}
 			else{
