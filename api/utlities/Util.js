@@ -77,6 +77,7 @@ module.exports = {
 			.toUpperCase()
 			.replace(/Ñ/g, 'N')
 			.replace(/\?/g, 'N')
+			.replace(/\//g, "")
 			.replace(/Á/g, 'A')
 			.replace(/É/g, 'E')
 			.replace(/Í/g, 'I')
