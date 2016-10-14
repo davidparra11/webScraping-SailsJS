@@ -22,56 +22,67 @@ module.exports = {
 		},
 		CODIGO: {
 			type: 'string',
-			defaultsTo: 'TMP12345678'
+			defaultsTo: ''
 		},
 		NOMBRECOMPLETO: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		PRIMER_NOMBRE: {
 			type: 'string',
+			defaultsTo: ''
 		},
 		SEGUNDO_NOMBRE: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		PRIMER_APELLIDO: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		SEGUNDO_APELLIDO: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		TIPO_PERSONA: {
 			type: 'string',
-			defaultsTo: 'INDIVIDUO' //defaultsTo: 'COLOMBIA'
+			defaultsTo: 'INDIVIDUO' 
 		},
 		TIPO_ID: {
 			type: 'string',
 			defaultsTo: 'CC'
 		},
-		IDs: {
-			type: 'string'
+		ID: {
+			type: 'string',
+			defaultsTo: ''
 		},
 		RELACIONADO_CON: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		ROL_O_DESCRIPCION1: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		ROL_O_DESCRIPCION2: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		AKA: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		FUENTE: {
 			type: 'string',
-			defaultsTo: 'HTTP://WWW.CONTRALORIAGEN.GOV.CO'
+			defaultsTo: 'HTTP://WWW.CONTRALORIAGEN.GOV.CO',
 		},
 		FECHA_UPDATE: {
-			columnName: 'FECHA_UPDATE',
 			type: 'string',
+			defaultsTo: ''
 		},
 		FECHA_FINAL_ROL: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},		
 		NACIONALIDAD_PAISDEORIGEN: {
 			type: 'string',
@@ -79,12 +90,15 @@ module.exports = {
 		},
 		DIRECCION: {
 			type: 'string',
+			defaultsTo: ''
 		},
 		ESTADO: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		LLAVEIMAGEN: {
-			type: 'string'
+			type: 'string',
+			defaultsTo: ''
 		},
 		REGISTRO: {
 			type: 'integer'
