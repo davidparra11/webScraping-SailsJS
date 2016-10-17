@@ -28,7 +28,7 @@ module.exports = {
 		totalBusqueda = dirs.length;
 		for (var i = 0 ; i<totalBusqueda; i++){
 			archivoActual = i;
-			var root = './Contraloria';
+			var root = '../Contraloria';
 			interpretaHV(root, dirs[i]); 
 		}
 	}
