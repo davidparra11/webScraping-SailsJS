@@ -94,5 +94,28 @@ module.exports = {
 	sleep: function (ms){
 		var waitTill = new Date(new Date().getTime() + ms);
 		while (waitTill > new Date()) {}
+	},
+	
+	addPersonasToDB: function(nombreCompleto, relacionadoCon, direccion, fechaUpdate, estado, infoBoletin) {
+
+		var x = {
+			NOMBRECOMPLETO: nombreCompleto,			
+			RELACIONADO_CON: relacionadoCon,
+			DIRECCION: direccion,
+			FECHA_UPDATE: fechaUpdate,
+			ESTADO: estado,
+		};		
+		Personas.create(x)
+			.exec(function(error, persona) {
+				//console.log(boletin);
+				if (error) {
+					console.log('error DB con: ' + infoBoletin + 'ERror: ' + error);
+					return true;
+				} else {
+					console.log('OK, DB.');
+					return true;
+				}
+			}); 
+		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
 	}
 }
