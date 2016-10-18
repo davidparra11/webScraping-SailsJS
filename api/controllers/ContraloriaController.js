@@ -1,13 +1,14 @@
 /* Requires */
 var request = require('request'), // Realiza las peticiones GET y POST asincrónicamente
 	//request = require('sync-request'), // Realiza las peticiones GET y POST sincrónicamente
-	cheerio = require('cheerio'), // Interpreta un archivo Html
-	util = require('util'), // Permite ampliar la información sobre los errores
-	utils = require('../utlities/Util'), // Guarda en la base de datos
-	fs = require('fs'), // Administrador del sistema de archivos
-	walk = require('walk'), // Recorre los archivos
-	dbManager = require('../utlities/dbManager') //Realiza las operaciones de base de datos
-	;
+    cheerio = require('cheerio'), // Interpreta un archivo Html
+    util = require('util'), // Permite ampliar la información sobre los errores
+    utils = require('../utlities/Util'), // Guarda en la base de datos
+   // fs = require('fs'), // Administrador del sistema de archivos
+    fs = require('graceful-fs'),
+    walk = require('walk'), // Recorre los archivos
+    dbManager = require('../utlities/dbManager') //Realiza las operaciones de base de datos
+    ;
 
 var consecCodigo = 0;
 var totalBusqueda = 0;

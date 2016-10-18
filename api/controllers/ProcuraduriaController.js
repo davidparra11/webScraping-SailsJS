@@ -1,5 +1,5 @@
 /**
- * BoletinController
+ * ProcuraduriaController
  *
  * @description :: Server-side logic for managing boletins
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
@@ -7,30 +7,24 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
+	iconv = require('iconv-lite'),
+	moment = require('moment'),
+	utils = require('../utlities/Util'),
+	dbManager = require('../utlities/dbManager');
+
+
+var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
-	boletinArrayHtml = [],
-	urls = [],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
 	i = 1,
 	year = 2010,
-	//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
 	linksArray = [],
-	utils = require('../utlities/Util');
-//Hola
-const util = require('util');
-var unorm = require('unorm');
-var iconv = require('iconv-lite');
-var y = 0;
-var moment = require('moment');
-var now = moment();
-var testDate = require('date-utils').language("es");
+	y = 0,
+	now = moment();
 
-//var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
-//var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
-
+var consecCodigo = 0;
 var month = new Array();
 month[0] = "Jan";
 month[1] = "Feb";
@@ -45,18 +39,19 @@ month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
 
-
-
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
-
+//Módulos que se van hacer públicos
 module.exports = {
-
 	/**
-	 * método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria.
+	  Descripción: método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria y
+	  guarda los datos importantes en la BD.
+	  req: Request
+	  res: Response
 	 */
 	boletinesNuevos: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
+
 		contador = 1;
 		boletinesNuevosError = [];
 		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
@@ -514,5 +509,183 @@ module.exports = {
 				}
 			});
 		//return res.view('procuraduria');
+	},
+
+	descargaBol2: function(req, res) {
+
+		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
+
+		contador = 1;
+		boletinesNuevosError = [];
+		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
+		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
+		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+
+		var numeroResultados;
+		try {
+			numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+		} catch (e) {
+			console.error('variable no definida: ' + e);
+			return;
+		}
+		for (var key in onceArray) {
+			interpretaBoletin(key, onceArray, numeroResultados);
+		}
 	}
-};
+}
+
+/*
+  Descripción: Interpreta un archivo html
+  root: ruta local del archivo
+  stat: status de la lectura del archivo con atributos básicos
+  next: callback al siguiente archivo
+ */
+function interpretaBoletin(key, onceArray, numeroResultados) {
+	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
+	try {
+		request(direccionWeb, function(err, resp, body) {
+			if (!err && resp.statusCode == 200) {
+				//Carga el archivo en operador $
+				var $ = cheerio.load(body);
+				$('a.news-list-title').each(function() {
+					var url = $(this).attr('href');
+					if (url === undefined)
+						return;
+					//var nombreUno = $(this).text().toString();
+					utils.sleep(500);
+					var url = 'http://www.procuraduria.gov.co/portal/' + url;
+					var cuerpo = escribirArchivoHtml(url);
+				});
+			} else {
+				utils.registrarError(error, urla);
+			}
+		})
+	} catch (e) {
+		utils.registrarError(e, urla);
+	}
+
+
+
+}
+
+
+/*
+  Descripción: Escribe un archivo html en el disco
+  nombreUno: Nombre completo del archivo con caracteres especiales
+  urla : url del archivo remoto
+ */
+function escribirArchivoHtml(urla) {
+	//+var nombreSinEspacios = utils.eliminarCaracteresEspeciales(nombreUno, true);
+	//+var ruta = '/htmlBoletines/' + nombreSinEspacios + '.html';
+	try {
+		//var writeStream = fs.createWriteStream('.' + ruta);
+		request(urla, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var dataBd = extraerHvBd(body, urla);
+				//+console.log(archivoActual + ' de ' + totalBusqueda);
+				dbManager.agregarBoletinToDB(dataBd);
+			} else {
+				utils.registrarError(error, urla);
+			}
+		});
+	} catch (e) {
+		utils.registrarError(e, urla);
+	}
+}
+
+
+
+/*
+  Descripción: Extrae los valores de la hoja de vida requeridos por la base de datos
+  err: Mensaje de error retornado por el request
+  resp: Código respuesta del request
+  body: Contenido de la respuesta del request
+  urlb : url del archivo remoto
+ */
+function extraerHvBd(cuerpo, url) {
+	var bodyWithCorrectEncoding = iconv.decode(cuerpo, 'iso-8859-1');
+	var $ = cheerio.load(bodyWithCorrectEncoding);
+	var textoUno = "";
+	var fecha = "";
+	var fuente = "";
+	var yearBoletin = "";
+
+	//texto boletín
+	var texto = $('p.MsoNormal').text().trim().toUpperCase();
+	var posParrafo = texto.indexOf(".");
+	var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+
+	if (texto === undefined || texto == "") {
+		$('div[align=justify]').each(function() {
+			var datos = $(this).last().text();
+			texto = datos.trim().toUpperCase();
+			var posParrafo = texto.indexOf(".");
+			var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+		});
+	}
+
+
+	//titulo boletín
+	var titulo = $('h2.prueba').text().trim().toUpperCase();
+
+	//boletin  boletín
+	var boletin = $('h3.news-view-subtitle').text().trim().toUpperCase();
+
+	//fecha y fuente.
+	$('h4').each(function() {
+		var datos = $(this).last().text();
+		var pos = datos.indexOf("n:");
+		var fechaSinFiltro = datos.slice(pos + 2);
+
+		var posIni = datos.indexOf(":");
+		var posDos = datos.indexOf("Fecha");
+		fuente = datos.slice(posIni + 1, posDos);
+
+		var posTres = fechaSinFiltro.indexOf(",");
+		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
+		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+
+		var result = fechaSinFormato.match(patt1);
+		//var result2 = result.toLocaleLowerCase();
+		var mes = Date.getMonthNumberFromName(result.toString().trim());
+		var mesNombre = month[mes];
+		var fechaSinMes = fechaSinFormato.replace(result, "");
+		fecha = mesNombre + ' ' + fechaSinMes;
+
+		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
+		yearBoletin = fechaSinFormato.match(patt2);
+	});
+
+	var boletinSinEspacios = boletin.replace(/ /g, "_");
+	var fechaSinCodificacion = fecha;
+	fechaCodificada = Date.parse(fechaSinCodificacion);
+
+	dirWeb = 'http://www.procuraduria.gov.co/portal/' + url;
+
+	dirLocalHtml = './htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html';
+	var infoBoletin = 'Boletin: ' + boletinSinEspacios;
+
+
+	//Relacionado con
+	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
+	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
+	//agregar datos de las variables a la base de datos.
+	//utils.agregarToDB(boletin, titulo, texto, textoUnoDos, fechaCodificada, 'Procuraduria', dirWeb, '', dirLocalHtml, infoBoletin);
+
+	request('http://www.procuraduria.gov.co/portal/' + url).pipe(fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html'));
+
+
+
+	//IngresaLista
+	var fecha = utils.fechaHoy();
+	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
+	consecCodigo++;
+	//Retornamos un json con los valores que debe recibir la base de datos
+	return {
+		CODIGO: 'TMP_' + consecCodigo,
+		RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
+		ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
+		FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
+		ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
+	};
+}

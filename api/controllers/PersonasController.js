@@ -127,12 +127,6 @@ module.exports = {
 
 							fecha = anio + '' + mes + '' + dia;
 
-
-							//console.log('Fecha: ' + fecha);
-							//console.log('fechaHoy: ' + fechaHoy);
-
-							//console.log('RelacionadoCon: ' + relacionadoCon);
-
 							var ingresaLista = 'INGRESA_LISTA: ' + fecha;
 
 							utils.addPersonasToDB(nombre, relacionadoCon, direccion, fecha, ingresaLista, nombre);

@@ -12,48 +12,99 @@ module.exports = {
 	autoUpdatedAt: false,
 	
     attributes: {
-        id: {
-            type: 'integer',
-            autoIncrement: true,
-            primaryKey: true
-        },
-        titulo: {
-            type: 'string'
-        },
-        boletin: {
+        ORIGEN_LISTA: {
             type: 'string',
-            size: 100
+            defaultsTo: 'COLOMBIA'
         },
-        textoCompleto: {
-            type: 'string', //varchar(max)
-            size: 10000
-        },
-        textoUnoDos: {
+        TIPO_LISTA: {
             type: 'string',
-            size: 4000
+            defaultsTo: 'BOLETINES PROCURADURIA'
         },
-        fuente: {
-            type: 'string'
-        },
-        fecha: {
-            type: 'string'
-        },
-        urlWeb: {
-            type: 'string'
-        },
-        localPdf: {
+        CODIGO: {
             type: 'string',
-            size: 120
+            defaultsTo: 'BOL12345678'
         },
-        localHtml: {
+        NOMBRECOMPLETO: {
             type: 'string',
-            size: 120
+            defaultsTo: ''
         },
-        creationDate: {
-	        columnName: 'cre_dt',
-	        type: 'datetime',
-	        defaultsTo: function() {return new Date();}
-    	}
+        PRIMER_NOMBRE: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        SEGUNDO_NOMBRE: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        PRIMER_APELLIDO: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        SEGUNDO_APELLIDO: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        TIPO_PERSONA: {
+            type: 'string',
+            defaultsTo: 'INDIVIDUO' 
+        },
+        TIPO_ID: {
+            type: 'string',
+            defaultsTo: 'CC'
+        },
+        IDs: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        RELACIONADO_CON: {
+            type: 'string',
+            defaultsTo: '',
+            size: 5000
+        },
+        ROL_O_DESCRIPCION1: {
+            type: 'string',
+            defaultsTo: '',
+            size: 3000
+        },
+        ROL_O_DESCRIPCION2: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        AKA: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        FUENTE: {
+            type: 'string',
+            defaultsTo: 'HTTP://WWW.PROCURADURIA.GOV.CO',
+        },
+        FECHA_UPDATE: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        FECHA_FINAL_ROL: {
+            type: 'string',
+            defaultsTo: ''
+        },      
+        NACIONALIDAD_PAISDEORIGEN: {
+            type: 'string',
+            defaultsTo: 'COLOMBIA' 
+        },
+        DIRECCION: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        ESTADO: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        LLAVEIMAGEN: {
+            type: 'string',
+            defaultsTo: ''
+        },
+        REGISTRO: {
+            type: 'integer'
+        }
     }
 };
 

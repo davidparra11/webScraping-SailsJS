@@ -72,11 +72,14 @@ module.exports.routes = {
   'GET /descargaHtmls': 'PersonasController.descargaHtmls',
   //Método que analiza individualmente la HV del contratista.
   'GET /personaContraloria': 'PersonasController.personaContraloria',
+  
 
   'GET /descargaHtmls2': 'ContraloriaController.descargaHtmls2',
 
 
-  'GET /numeroLinks': 'LinksController.numeroLinks'
+  'GET /numeroLinks': 'LinksController.numeroLinks',
 
+
+  'GET /descargaBol2': 'ProcuraduriaController.descargaBol2'
 
 };
