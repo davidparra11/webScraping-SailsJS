@@ -80,6 +80,8 @@ module.exports.routes = {
   'GET /numeroLinks': 'LinksController.numeroLinks',
 
 
-  'GET /descargaBol2': 'ProcuraduriaController.descargaBol2'
+  'GET /descargaBol2': 'ProcuraduriaController.descargaBol2',
+
+  'GET /descargaBolAnti2': 'ProcuraduriaController.descargaBolAnti2'
 
 };

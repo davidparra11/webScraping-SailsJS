@@ -15,6 +15,7 @@ var request = require('request'),
 
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
+	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
@@ -531,6 +532,25 @@ module.exports = {
 		for (var key in onceArray) {
 			interpretaBoletin(key, onceArray, numeroResultados);
 		}
+	},
+
+	descargaBolAnti2: function(req, res) {
+
+		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
+
+		var moment = require('moment');
+		var now = moment();
+		var testDate = require('date-utils').language("es");
+		var pdf = require('html-pdf');
+
+		var boletinesFalsos = [];
+		//var i = 1;
+		//var totContador = 920;
+		bucleContador(cantBoletinesArray[y], y);
+		if (y > 6) {
+			return;
+		}
+
 	}
 }
 
@@ -719,17 +739,17 @@ function loopBoletin(i, llave) {
 	}
 
 	try {
-		request(urla, function(error, response, body) {
+		request(dirInterna, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var dataBd = extraerBolAntiguoBd(body, urla);
+				var dataBd = extraerBolAntiguoBd(body, dirInterna);
 				//+console.log(archivoActual + ' de ' + totalBusqueda);
 				dbManager.agregarBoletinToDB(dataBd);
 			} else {
-				utils.registrarError(error, urla);
+				utils.registrarError(error, dirInterna);
 			}
 		});
 	} catch (e) {
-		utils.registrarError(e, urla);
+		utils.registrarError(e, dirInterna);
 	}
 	bucleContador(cantBoletinesArray[y], y);
 }
@@ -813,7 +833,7 @@ function extraerBolAntiguoBd(cuerpo, url) {
 	var boletinSinEspacios = boletin.replace(/ /g, "_");
 
 	//crea los archivos HTML de los boletines analizados.
-	request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
+	//request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
 	boletinArray.length = 0;
 
 
@@ -830,7 +850,7 @@ function extraerBolAntiguoBd(cuerpo, url) {
 	return {
 		CODIGO: 'TMP_' + consecCodigo,
 		RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
-		ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
+		ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(textoCompletoUno, false),
 		FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
 		ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
 	};
