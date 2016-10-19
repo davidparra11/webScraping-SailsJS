@@ -268,11 +268,11 @@ module.exports = {
 					} else if (boletinArray[0].length > 31) {
 						titulo = boletinArray[0].toString().trim();
 					} else {
-						//+	//console.log('boletinArray[1].: ' + JSON.stringify(boletinArray[1]));
 						titulo = boletinArray[1].toString();
 						if (boletinArray[1].toString().length < 15)
 							titulo = 'COMUNICADO DE PRENSA';
 					}
+
 					//bloque para filtrar todo el texto completo del boletín.
 					if (boletinArray[1].toString().length > 99) {
 						var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
@@ -534,6 +534,8 @@ module.exports = {
 	}
 }
 
+
+
 /*
   Descripción: Interpreta un archivo html
   root: ruta local del archivo
@@ -581,7 +583,7 @@ function escribirArchivoHtml(urla) {
 		//var writeStream = fs.createWriteStream('.' + ruta);
 		request(urla, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var dataBd = extraerHvBd(body, urla);
+				var dataBd = extraerBolBd(body, urla);
 				//+console.log(archivoActual + ' de ' + totalBusqueda);
 				dbManager.agregarBoletinToDB(dataBd);
 			} else {
@@ -593,16 +595,14 @@ function escribirArchivoHtml(urla) {
 	}
 }
 
-
-
 /*
-  Descripción: Extrae los valores de la hoja de vida requeridos por la base de datos
+  Descripción: Extrae los valores de los boletínes requeridos por la base de datos
   err: Mensaje de error retornado por el request
   resp: Código respuesta del request
   body: Contenido de la respuesta del request
   urlb : url del archivo remoto
  */
-function extraerHvBd(cuerpo, url) {
+function extraerBolBd(cuerpo, url) {
 	var bodyWithCorrectEncoding = iconv.decode(cuerpo, 'iso-8859-1');
 	var $ = cheerio.load(bodyWithCorrectEncoding);
 	var textoUno = "";
@@ -669,12 +669,111 @@ function extraerHvBd(cuerpo, url) {
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
-	//agregar datos de las variables a la base de datos.
-	//utils.agregarToDB(boletin, titulo, texto, textoUnoDos, fechaCodificada, 'Procuraduria', dirWeb, '', dirLocalHtml, infoBoletin);
 
 	request('http://www.procuraduria.gov.co/portal/' + url).pipe(fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html'));
 
+	//IngresaLista
+	var fecha = utils.fechaHoy();
+	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
+	consecCodigo++;
+	//Retornamos un json con los valores que debe recibir la base de datos
+	return {
+		CODIGO: 'TMP_' + consecCodigo,
+		RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
+		ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
+		FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
+		ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
+	};
+}
 
+
+
+/*
+  Descripción: Extrae los valores de los boletínes requeridos por la base de datos
+  err: Mensaje de error retornado por el request
+  resp: Código respuesta del request
+  body: Contenido de la respuesta del request
+  urlb : url del archivo remoto
+ */
+function extraerBolAntiguoBd(cuerpo, url) {
+
+	var $ = cheerio.load(cuerpo);
+
+	var fechaCodificada = '';
+	var fecha = '';
+
+	$('p').each(function() {
+		var datos = $(this).last().text();
+		boletinArray.push(datos);
+		fechaArray = $(this).find("strong").text();
+		if (fechaArray.length > 16 && fecha == '' && fechaArray.length < 40 && fechaArray.search('[0-9]') != -1) // && fecha == '' 
+			fecha = fechaArray;
+	});
+
+	var finalParrafo = boletinArray.length - 1;
+	var boletin = boletinArray.slice(0, 1).toString();
+	var titulo = boletinArray.slice(1, 2).toString();
+	var textoUnoDos = '';
+
+	//numero boletin
+	if (boletin.length == 31) {
+		boletin = boletin.slice(20);
+	} else if (boletinArray[1].toString().length == 31) {
+		boletin = boletinArray[1].toString().slice(20);
+	} else {
+		$('td.marcogris2').each(function() {
+			var datoBoletin = $(this).text();
+			boletin = datoBoletin.slice(20);
+		});
+	}
+	//titulo
+	if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
+		titulo = titulo.trim();
+	} else if (boletinArray[0].length > 31) {
+		titulo = boletinArray[0].toString().trim();
+	} else {
+		//+	//console.log('boletinArray[1].: ' + JSON.stringify(boletinArray[1]));
+		titulo = boletinArray[1].toString();
+		if (boletinArray[1].toString().length < 15)
+			titulo = 'COMUNICADO DE PRENSA';
+	}
+	//bloque para filtrar todo el texto completo del boletín.
+	if (boletinArray[1].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(1, 3).toString().trim();
+
+	} else if (boletinArray[2].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(2, 4).toString().trim();
+
+	} else {
+		var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		if (boletinArray[2].toString().length < 99)
+			var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+	}
+
+	if (textoCompletoUno == '') {
+		var textoCompletoUnoAnterior = boletinArray.slice(0, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(0, 2).toString().trim();
+	}
+	var boletinSinEspacios = boletin.replace(/ /g, "_");
+
+	//crea los archivos HTML de los boletines analizados.
+	request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
+	boletinArray.length = 0;
+
+
+
+	//Relacionado con
+	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
+	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
 
 	//IngresaLista
 	var fecha = utils.fechaHoy();
