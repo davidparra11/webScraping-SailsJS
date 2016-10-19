@@ -688,6 +688,53 @@ function extraerBolBd(cuerpo, url) {
 
 
 
+function bucleContador(totContador, llave) {
+	if (y > 6) {
+		return;
+	}
+	//console.log('totContador: ' + totContador + 'llave: ' + llave);
+	if (i === undefined)
+		i = 1;
+	if (i >= totContador) {
+		i = 0;
+		y++;
+		//console.log('Y: ' + y + 'llave: ' + llave + 'cantBoletinesArray: ' + cantBoletinesArray[y]);
+		bucleContador(cantBoletinesArray[y], y);
+	}
+	i++;
+	////console.log('hol mundo' + totContador + 'llave: ' + llave);
+	loopBoletin(i, llave);
+}
+
+
+
+function loopBoletin(i, llave) {
+
+	if (i < 10) {
+		var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_00' + i + '.htm';
+	} else if (i > 9 && i < 100) {
+		var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_0' + i + '.htm';
+	} else {
+		var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_' + i + '.htm';
+	}
+
+	try {
+		request(urla, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var dataBd = extraerBolAntiguoBd(body, urla);
+				//+console.log(archivoActual + ' de ' + totalBusqueda);
+				dbManager.agregarBoletinToDB(dataBd);
+			} else {
+				utils.registrarError(error, urla);
+			}
+		});
+	} catch (e) {
+		utils.registrarError(e, urla);
+	}
+	bucleContador(cantBoletinesArray[y], y);
+}
+
+
 /*
   Descripción: Extrae los valores de los boletínes requeridos por la base de datos
   err: Mensaje de error retornado por el request
