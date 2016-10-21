@@ -572,8 +572,6 @@ function loopBoletin(i, llave) {
 	}
 	bucleContador(cantBoletinesArray[y], y);
 }
-
-
 /*
   Descripción: Extrae los valores de los boletínes requeridos por la base de datos
   err: Mensaje de error retornado por el request
@@ -584,7 +582,6 @@ function loopBoletin(i, llave) {
 function extraerBolAntiguoBd(cuerpo, url) {
 
 	var $ = cheerio.load(cuerpo);
-
 	var fechaCodificada = '';
 	var fecha = '';
 
@@ -618,7 +615,6 @@ function extraerBolAntiguoBd(cuerpo, url) {
 	} else if (boletinArray[0].length > 31) {
 		titulo = boletinArray[0].toString().trim();
 	} else {
-		//+	//console.log('boletinArray[1].: ' + JSON.stringify(boletinArray[1]));
 		titulo = boletinArray[1].toString();
 		if (boletinArray[1].toString().length < 15)
 			titulo = 'COMUNICADO DE PRENSA';
@@ -652,10 +648,8 @@ function extraerBolAntiguoBd(cuerpo, url) {
 	var boletinSinEspacios = boletin.replace(/ /g, "_");
 
 	//crea los archivos HTML de los boletines analizados.
-	//request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
+	request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
 	boletinArray.length = 0;
-
-
 
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
