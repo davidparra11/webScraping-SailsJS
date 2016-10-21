@@ -17,7 +17,7 @@ module.exports = {
 	//Funcion para agregar los datos de los boletines a la Base de DAtos.
 	agregarBoletinToDB: function(boletin) {
 
-		Boletin.create(boletin)
+		Personas.create(boletin)
 			.exec(function(error, res) {
 				if (error) {
 					console.log('error DB; boletin: ' + boletin.CODIGO + 'Error: ' + error);

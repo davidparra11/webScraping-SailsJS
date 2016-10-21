@@ -52,7 +52,7 @@ module.exports = {
 			type: 'string',
 			defaultsTo: 'CC'
 		},
-		ID: {
+		IDs: {
 			type: 'string',
 			defaultsTo: ''
 		},
