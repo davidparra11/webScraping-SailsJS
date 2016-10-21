@@ -54,7 +54,7 @@ module.exports = {
 	/**
 	 * método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria.
 	 */
-	boletinesNuevos: function(req, res) {
+	descargaBol2: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
 		contador = 1;
@@ -192,7 +192,7 @@ module.exports = {
 	  req: Request
 	  res: Response
 	 */
-	boletinesAntiguos: function(req, res) {
+	descargaBolAnti2: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
 		// numero exacto de boletines por año.
