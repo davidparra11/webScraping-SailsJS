@@ -1,4 +1,19 @@
 var	util = require('util'); // Permite ampliar la información sobre los errores
+var moment = require('moment');
+var moment = now = moment();
+var month = new Array();
+month[0] = "Jan";
+month[1] = "Feb";
+month[2] = "Mar";
+month[3] = "Apr";
+month[4] = "May";
+month[5] = "Jun";
+month[6] = "Jul";
+month[7] = "Aug";
+month[8] = "Sep";
+month[9] = "Oct";
+month[10] = "Nov";
+month[11] = "Dec";
 	
 module.exports = {
 	fechaHoy: function(){
@@ -39,8 +54,7 @@ module.exports = {
 				}
 			}); 
 		//return true;       
-	},
-	
+	},	
 	
 	addLinksToDB: function(link, infoLink) {
 
@@ -77,7 +91,8 @@ module.exports = {
 			.toUpperCase()
 			.replace(/Ñ/g, 'N')
 			.replace(/\?/g, 'N')
-			.replace(/\//g, "")
+			.replace(/\//g, '')
+			.replace(/•/gi, '')
 			.replace(/Á/g, 'A')
 			.replace(/É/g, 'E')
 			.replace(/Í/g, 'I')
@@ -90,9 +105,88 @@ module.exports = {
 		}
 		return res;
 	},
+
+	filtrarFecha: function (datos){
+		
+		var pos = datos.indexOf("n:");
+		var fechaSinFiltro = datos.slice(pos + 2);
+		var posTres = fechaSinFiltro.indexOf(",");
+		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
+		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+		var result = fechaSinFormato.match(patt1);
+		//var result2 = result.toLocaleLowerCase();
+		var mes = Date.getMonthNumberFromName(result.toString().trim());
+		var mesNombre = month[mes];
+		var fechaSinMes = fechaSinFormato.replace(result, "");
+		var fecha = mesNombre + ' ' + fechaSinMes;
+
+		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
+		yearBoletin = fechaSinFormato.match(patt2);
+		return {fecha:fecha,
+			yearBoletin: yearBoletin
+		};
+	},
+
+	//bloque para filtrar todo el texto completo del boletín.toUpperCase
+	filtrarTextoBoletines: function (boletinArray){	
+		
+	var finalParrafo = boletinArray.length - 1;	
+		
+	if (boletinArray[1].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(1, 3).toString().trim();
+
+	} else if (boletinArray[2].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(2, 4).toString().trim();
+
+	} else {
+		var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		if (boletinArray[2].toString().length < 99)
+			var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+	}
+
+	if (textoCompletoUno == '') {
+		var textoCompletoUnoAnterior = boletinArray.slice(0, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(0, 2).toString().trim();
+	}
+		return {textoCompletoUno:textoCompletoUno.toUpperCase(),
+			textoUnoDos: textoUnoDos.toUpperCase()
+		};
+	},
 	
 	sleep: function (ms){
 		var waitTill = new Date(new Date().getTime() + ms);
 		while (waitTill > new Date()) {}
+	},
+	
+	addPersonasToDB: function(nombreCompleto, relacionadoCon, direccion, fechaUpdate, estado, infoBoletin) {
+
+		var x = {
+			NOMBRECOMPLETO: nombreCompleto,			
+			RELACIONADO_CON: relacionadoCon,
+			DIRECCION: direccion,
+			FECHA_UPDATE: fechaUpdate,
+			ESTADO: estado,
+		};		
+		Personas.create(x)
+			.exec(function(error, persona) {
+				//console.log(boletin);
+				if (error) {
+					console.log('error DB con: ' + infoBoletin + 'ERror: ' + error);
+					return true;
+				} else {
+					console.log('OK, DB.');
+					return true;
+				}
+			}); 
+		//return true;  CONTRALORÍA: DIRECTORIO DE FUNCIONARIOS Y CONTRATISTAS 2016, CONTRALORÍA GENERAL DE LA REPÚBLICA,
 	}
 }

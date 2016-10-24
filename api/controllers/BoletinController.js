@@ -45,13 +45,6 @@ month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
 
-switch (process.env.SELEC_ARRAY) {
-			case 1:
-				cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429];
-				break;
-			case 2:
-				cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
-		}
 
 
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
@@ -61,7 +54,7 @@ module.exports = {
 	/**
 	 * método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria.
 	 */
-	boletinesNuevos: function(req, res) {
+	descargaBol2: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
 		contador = 1;
@@ -100,17 +93,20 @@ module.exports = {
 										decodeEntities: true
 									});
 									var fecha = "";
-									var texto = "";
 									var boletin = "";
 									var titulo = "";
 									var fuente = "";
 									var yearBoletin = "";
 
 									//texto
-									$('p.MsoNormal').each(function() {
-										var urlTexto = $(this).last().text();
-										texto = urlTexto.toString();
-									});
+									var texto = $('p.MsoNormal').text().trim();
+
+									if (texto === undefined || texto == "") {
+										$('div[align=justify]').each(function() {
+											var datos = $(this).last().text();
+											texto = datos.trim();
+										});
+									}
 
 									if (texto === undefined || texto == "") {
 										$('div[align=justify]').each(function() {
@@ -167,7 +163,6 @@ module.exports = {
 
 									var fechaSinCodificacion = fecha;
 									//fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
-
 									fechaCodificada = Date.parse(fechaSinCodificacion);
 
 									dirWeb = 'http://www.procuraduria.gov.co/portal/' + url;
@@ -193,14 +188,19 @@ module.exports = {
 		return res.view('procuraduria');
 	},
 	/**
-	 * método que hace la búsqueda y recopilación a los boletines del 2010 y años anteriores de la procuraduría.
+	  Descripción: método que hace la búsqueda y recopilación a los boletines del 2010 y años anteriores de la procuraduría.
+	  req: Request
+	  res: Response
 	 */
-	boletinesAntiguos: function(req, res) {
+	descargaBolAnti2: function(req, res) {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
+		// numero exacto de boletines por año.
+		//var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429]; 
+		// arry de prueba para los boletines.
+		var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+
 		var boletinesFalsos = [];
-		//var i = 1;
-		//var totContador = 920;
 
 		try {
 			bucleContador(cantBoletinesArray[y], y);
@@ -214,20 +214,15 @@ module.exports = {
 			if (y > 6) {
 				return true;
 			}
-			//console.log('totContador: ' + totContador + 'llave: ' + llave);
 			if (i === undefined)
 				i = 1;
 			if (i >= totContador) {
 				i = 0;
 				y++;
-				//console.log('Y: ' + y + 'llave: ' + llave + 'cantBoletinesArray: ' + cantBoletinesArray[y]);
 				bucleContador(cantBoletinesArray[y], y);
 			}
 			i++;
-			////console.log('hol mundo' + totContador + 'llave: ' + llave);
 			loopBoletin(i, llave);
-
-
 		}
 
 		function loopBoletin(i, llave) {
@@ -239,11 +234,13 @@ module.exports = {
 			} else {
 				var dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[llave] + '/noticias_' + i + '.htm';
 			}
+
 			request(dirInterna, function(err, resp, body) {
 				if (!err && resp.statusCode == 200) {
 					var $ = cheerio.load(body);
-					fechaCodificada = '';
-					fecha = '';
+
+					var fechaCodificada = '';
+					var fecha = '';
 
 					$('p').each(function() {
 						var datos = $(this).last().text();
@@ -256,10 +253,10 @@ module.exports = {
 					var finalParrafo = boletinArray.length - 1;
 					var boletin = boletinArray.slice(0, 1).toString();
 					var titulo = boletinArray.slice(1, 2).toString();
-					//	var textoCompletoUno = boletinArray.slice(4, finalParrafo).toString(); //boletinArray.slice(4, 8).toString()
-					var textoUnoDos = boletinArray.slice(4, 6).toString();
-					/*if (textoCompletoUno.length < 60)
-						boletinesFalsos.push(i);*/
+					//var textoUnoDos = boletinArray.slice(4, 6).toString();
+					var textoUnoDos = '';
+
+					//numero boletin
 					if (boletin.length == 31) {
 						boletin = boletin.slice(20);
 					} else if (boletinArray[1].toString().length == 31) {
@@ -267,11 +264,10 @@ module.exports = {
 					} else {
 						$('td.marcogris2').each(function() {
 							var datoBoletin = $(this).text();
-							//+//console.log('Boletin: ' + JSON.stringify(datoBoletin));
 							boletin = datoBoletin.slice(20);
 						});
 					}
-
+					//titulo
 					if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
 						titulo = titulo.trim();
 					} else if (boletinArray[0].length > 31) {
@@ -282,31 +278,40 @@ module.exports = {
 						if (boletinArray[1].toString().length < 15)
 							titulo = 'COMUNICADO DE PRENSA';
 					}
-					//bloque para filtrar todo el texto completo del boletin.
+					//bloque para filtrar todo el texto completo del boletín.
 					if (boletinArray[1].toString().length > 99) {
 						var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
-						textoCompletoUno = textoCompletoUnoAnterior.toString().trim()
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+						textoUnoDos = boletinArray.slice(1, 3).toString().trim();
 
 					} else if (boletinArray[2].toString().length > 99) {
 						var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
 						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+						textoUnoDos = boletinArray.slice(2, 4).toString().trim();
 
 					} else {
 						var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
 						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+						textoUnoDos = boletinArray.slice(3, 5).toString().trim();
 						if (boletinArray[2].toString().length < 99)
 							var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
+						textoUnoDos = boletinArray.slice(3, 5).toString().trim();
 						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-
 					}
 
+					if (textoCompletoUno == '') {
+						var textoCompletoUnoAnterior = boletinArray.slice(0, finalParrafo);
+						textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+						textoUnoDos = boletinArray.slice(0, 2).toString().trim();
+					}
+
+					//fecha 
 					if (fecha == '') {
 						$('strong').each(function() {
 							var datoFecha = $(this).text();
 							fecha = datoFecha.trim();
 						});
 					}
-
 					if (fecha == '') {
 						var finalFecha = textoCompletoUno.toString().search(":");
 						fecha = textoCompletoUno.toString().slice(0, 30).trim();
@@ -318,7 +323,6 @@ module.exports = {
 					var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
 
 					var result = fechaSinFormato.match(patt1);
-					//console.log('Result: ' + result);
 					//var result2 = result.toLocaleLowerCase();
 					if (result === null)
 						result = 'enero';
@@ -331,23 +335,18 @@ module.exports = {
 					fechaSinCodificacion = fechaSinCodificacion.replace(/de/gi, "");
 
 					fechaCodificada = Date.parse(fechaSinCodificacion);
-					//console.log('YEAR: ' + yearArray[llave] + ' -i: ' + i + ' -y: ' + y);
-					//console.log('Boletin: ' + JSON.stringify(boletin));
 
 					dirLocalHtml = './htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html';
-					//dirLocalPdf = './pdfBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.pdf';
 					var infoBoletin = 'año: ' + yearArray[llave] + 'boletin ' + boletinSinEspacios + '.' + i;
 
 					//agregar datos de las variables a la base de datos.
 					utils.agregarToDB(boletin, titulo, textoCompletoUno, textoUnoDos, fechaCodificada, 'Procuraduria', dirInterna, '', dirLocalHtml, infoBoletin);
-
+					//crea los archivos HTML de los boletines analizados.
 					request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
 					boletinArray.length = 0;
 				} else {
 					console.log('Hubo un error en la descarga de la página: - ' + dirInterna + ' -i: ' + i);
 					//boletinesFalsos.push(i);
-					//console.log('direccion: ' + boletinesFalsos);
-					//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + yearArray[key] + '/noticias_' + i + '.htm';
 				}
 			});
 			bucleContador(cantBoletinesArray[y], y);
@@ -454,15 +453,17 @@ module.exports = {
 					var titulo = "";
 					var fuente = "";
 
-					$('p.MsoNormal').each(function() {
-						var url = $(this).last().text();
-						texto = url.toString();
-					});
+					texto = $('p.MsoNormal').text();
+
+
+
+					console.log('Texto: ' + texto);
 
 					if (texto === undefined || texto == "") {
 						$('div[align=justify]').each(function() {
 							var datos = $(this).last().text();
 							texto = datos;
+							console.log('Texto Alternativo: ' + datos);
 						});
 					}
 

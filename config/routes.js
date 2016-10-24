@@ -49,9 +49,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
   // El método realiza el análisis a los boletines de la procuradura del 2011 y después.
-  'GET /boletinesNuevos': 'BoletinController.boletinesNuevos',
+  'GET /descargaBol2': 'BoletinController.descargaBol2',
   // El método realiza el análisis a los boletines de la procuradura del 2010 y antes.
-  'GET /boletinesAntiguos': 'BoletinController.boletinesAntiguos',
+  'GET /descargaBolAnti2': 'BoletinController.descargaBolAnti2',
   // El método realiza el análisis a el boletin del 2010 o antes entrado como parametro GET .
   'GET /individual': 'BoletinController.individual',
   // El método realiza el análisis a los boletin del 2011 o después entrado como parametro.
@@ -72,11 +72,15 @@ module.exports.routes = {
   'GET /descargaHtmls': 'PersonasController.descargaHtmls',
   //Método que analiza individualmente la HV del contratista.
   'GET /personaContraloria': 'PersonasController.personaContraloria',
+  
 
   'GET /descargaHtmls2': 'ContraloriaController.descargaHtmls2',
 
 
-  'GET /numeroLinks': 'LinksController.numeroLinks'
+  'GET /numeroLinks': 'LinksController.numeroLinks',
 
+  'GET /boletinesNuevos': 'ProcuraduriaController.boletinesNuevos',
+
+  'GET /boletinesAntiguos': 'ProcuraduriaController.boletinesAntiguos'
 
 };
