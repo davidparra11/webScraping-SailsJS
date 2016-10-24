@@ -1,4 +1,19 @@
 var	util = require('util'); // Permite ampliar la información sobre los errores
+var moment = require('moment');
+var moment = now = moment();
+var month = new Array();
+month[0] = "Jan";
+month[1] = "Feb";
+month[2] = "Mar";
+month[3] = "Apr";
+month[4] = "May";
+month[5] = "Jun";
+month[6] = "Jul";
+month[7] = "Aug";
+month[8] = "Sep";
+month[9] = "Oct";
+month[10] = "Nov";
+month[11] = "Dec";
 	
 module.exports = {
 	fechaHoy: function(){
@@ -39,8 +54,7 @@ module.exports = {
 				}
 			}); 
 		//return true;       
-	},
-	
+	},	
 	
 	addLinksToDB: function(link, infoLink) {
 
@@ -105,7 +119,34 @@ module.exports = {
 		var mesNombre = month[mes];
 		var fechaSinMes = fechaSinFormato.replace(result, "");
 		var fecha = mesNombre + ' ' + fechaSinMes;
-		return fecha;
+
+		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
+		yearBoletin = fechaSinFormato.match(patt2);
+		return {fecha:fecha,
+			yearBoletin: yearBoletin
+		};
+	},
+
+
+	filtrarTextoBoletines: function (datos){
+		
+		var pos = datos.indexOf("n:");
+		var fechaSinFiltro = datos.slice(pos + 2);
+		var posTres = fechaSinFiltro.indexOf(",");
+		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
+		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+		var result = fechaSinFormato.match(patt1);
+		//var result2 = result.toLocaleLowerCase();
+		var mes = Date.getMonthNumberFromName(result.toString().trim());
+		var mesNombre = month[mes];
+		var fechaSinMes = fechaSinFormato.replace(result, "");
+		var fecha = mesNombre + ' ' + fechaSinMes;
+
+		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
+		yearBoletin = fechaSinFormato.match(patt2);
+		return {fecha:fecha,
+			yearBoletin: yearBoletin
+		};
 	},
 	
 	sleep: function (ms){

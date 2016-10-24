@@ -136,7 +136,6 @@ function llamarDb(urla, url) {
 		utils.registrarError(e, urla);
 	}
 }
-
 /*
   Descripción: Extrae los valores de los boletínes requeridos por la base de datos
   err: Mensaje de error retornado por el request
@@ -165,7 +164,6 @@ function extraerBolBd(cuerpo, url) {
 			var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
 		});
 	}
-
 	//titulo boletín
 	var titulo = $('h2.prueba').text().trim().toUpperCase();
 
@@ -175,25 +173,16 @@ function extraerBolBd(cuerpo, url) {
 	//fecha y fuente.
 	$('h4').each(function() {
 		var datos = $(this).last().text();
-		fecha = utils.filtrarFecha(datos);
+		fecha = utils.filtrarFecha(datos).fecha;
 
 		var posIni = datos.indexOf(":");
 		var posDos = datos.indexOf("Fecha");
 		fuente = datos.slice(posIni + 1, posDos);
 
-		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
-		yearBoletin = fechaSinFormato.match(patt2);
+		yearBoletin = utils.filtrarFecha(datos).yearBoletin;
 	});
 
 	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
-	var fechaSinCodificacion = fecha;
-	fechaCodificada = Date.parse(fechaSinCodificacion);
-
-	dirWeb = 'http://www.procuraduria.gov.co/portal/' + url;
-
-	dirLocalHtml = './htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html';
-	var infoBoletin = 'Boletin: ' + boletinSinEspacios;
-
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
@@ -228,8 +217,6 @@ function bucleContador(totContador, llave) {
 	i++;
 	loopBoletin(i, llave);
 }
-
-
 
 function loopBoletin(i, llave) {
 
