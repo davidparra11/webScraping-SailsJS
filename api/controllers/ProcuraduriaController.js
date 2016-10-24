@@ -262,59 +262,33 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 			fecha = fechaArray;
 	});
 
-	var finalParrafo = boletinArray.length - 1;
 	var boletin = boletinArray.slice(0, 1).toString();
 	var titulo = boletinArray.slice(1, 2).toString();
-	var textoUnoDos = '';
 	//numero boletin
 	if (boletin.length == 31) {
-		boletin = boletin.slice(20);
+		boletin = boletin.slice(20).toUpperCase();
 	} else if (boletinArray[1].toString().length == 31) {
-		boletin = boletinArray[1].toString().slice(20);
+		boletin = boletinArray[1].toString().slice(20).toUpperCase();
 	} else {
 		$('td.marcogris2').each(function() {
 			var datoBoletin = $(this).text();
-			boletin = datoBoletin.slice(20);
+			boletin = datoBoletin.slice(20).toUpperCase();
 		});
 	}
 	//titulo
 	if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
-		titulo = titulo.trim();
+		titulo = titulo.trim().toUpperCase();
 	} else if (boletinArray[0].length > 31) {
-		titulo = boletinArray[0].toString().trim();
+		titulo = boletinArray[0].toString().trim().toUpperCase();
 	} else {
-		titulo = boletinArray[1].toString();
+		titulo = boletinArray[1].toString().toUpperCase();
 		if (boletinArray[1].toString().length < 15)
 			titulo = 'COMUNICADO DE PRENSA';
 	}
-	//bloque para filtrar todo el texto completo del boletín.
-	if (boletinArray[1].toString().length > 99) {
-		var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
-		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-		textoUnoDos = boletinArray.slice(1, 3).toString().trim();
 
-	} else if (boletinArray[2].toString().length > 99) {
-		var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
-		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-		textoUnoDos = boletinArray.slice(2, 4).toString().trim();
-
-	} else {
-		var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
-		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
-		if (boletinArray[2].toString().length < 99)
-			var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
-		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
-		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-	}
-
-	if (textoCompletoUno == '') {
-		var textoCompletoUnoAnterior = boletinArray.slice(0, finalParrafo);
-		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
-		textoUnoDos = boletinArray.slice(0, 2).toString().trim();
-	}
-	var boletinSinEspacios = boletin.replace(/ /g, "_");
-
+	var textoUnoDos = utils.filtrarTextoBoletines(boletinArray).textoUnoDos;
+	var textoCompletoUno = utils.filtrarTextoBoletines(boletinArray).textoCompletoUno;
+	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
 	var writeStream = fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html');
 
 	//crea los archivos HTML de los boletines analizados.

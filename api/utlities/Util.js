@@ -127,25 +127,38 @@ module.exports = {
 		};
 	},
 
-
-	filtrarTextoBoletines: function (datos){
+	//bloque para filtrar todo el texto completo del boletín.toUpperCase
+	filtrarTextoBoletines: function (boletinArray){	
 		
-		var pos = datos.indexOf("n:");
-		var fechaSinFiltro = datos.slice(pos + 2);
-		var posTres = fechaSinFiltro.indexOf(",");
-		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
-		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
-		var result = fechaSinFormato.match(patt1);
-		//var result2 = result.toLocaleLowerCase();
-		var mes = Date.getMonthNumberFromName(result.toString().trim());
-		var mesNombre = month[mes];
-		var fechaSinMes = fechaSinFormato.replace(result, "");
-		var fecha = mesNombre + ' ' + fechaSinMes;
+	var finalParrafo = boletinArray.length - 1;	
+		
+	if (boletinArray[1].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(1, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(1, 3).toString().trim();
 
-		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
-		yearBoletin = fechaSinFormato.match(patt2);
-		return {fecha:fecha,
-			yearBoletin: yearBoletin
+	} else if (boletinArray[2].toString().length > 99) {
+		var textoCompletoUnoAnterior = boletinArray.slice(2, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(2, 4).toString().trim();
+
+	} else {
+		var textoCompletoUnoAnterior = boletinArray.slice(3, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		if (boletinArray[2].toString().length < 99)
+			var textoCompletoUnoAnterior = boletinArray.slice(4, finalParrafo);
+		textoUnoDos = boletinArray.slice(3, 5).toString().trim();
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+	}
+
+	if (textoCompletoUno == '') {
+		var textoCompletoUnoAnterior = boletinArray.slice(0, finalParrafo);
+		textoCompletoUno = textoCompletoUnoAnterior.toString().trim();
+		textoUnoDos = boletinArray.slice(0, 2).toString().trim();
+	}
+		return {textoCompletoUno:textoCompletoUno.toUpperCase(),
+			textoUnoDos: textoUnoDos.toUpperCase()
 		};
 	},
 	
