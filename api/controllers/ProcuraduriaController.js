@@ -122,7 +122,6 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
   url: ruta especifica del archivo html
  */
 function llamarDb(urla, url) {
-	//+var nombreSinEspacios = utils.eliminarCaracteresEspeciales(nombreUno, true);
 	//+var ruta = '/htmlBoletines/' + nombreSinEspacios + '.html';
 	try {
 		request(urla, function(error, response, body) {
@@ -143,7 +142,7 @@ function llamarDb(urla, url) {
   err: Mensaje de error retornado por el request
   resp: Código respuesta del request
   body: Contenido de la respuesta del request
-  urlb : url del archivo remoto
+  url : url del boletin de la procuraduria.
  */
 function extraerBolBd(cuerpo, url) {
 	var bodyWithCorrectEncoding = iconv.decode(cuerpo, 'iso-8859-1');
@@ -167,7 +166,6 @@ function extraerBolBd(cuerpo, url) {
 		});
 	}
 
-
 	//titulo boletín
 	var titulo = $('h2.prueba').text().trim().toUpperCase();
 
@@ -177,29 +175,17 @@ function extraerBolBd(cuerpo, url) {
 	//fecha y fuente.
 	$('h4').each(function() {
 		var datos = $(this).last().text();
-		var pos = datos.indexOf("n:");
-		var fechaSinFiltro = datos.slice(pos + 2);
+		fecha = utils.filtrarFecha(datos);
 
 		var posIni = datos.indexOf(":");
 		var posDos = datos.indexOf("Fecha");
 		fuente = datos.slice(posIni + 1, posDos);
 
-		var posTres = fechaSinFiltro.indexOf(",");
-		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
-		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
-
-		var result = fechaSinFormato.match(patt1);
-		//var result2 = result.toLocaleLowerCase();
-		var mes = Date.getMonthNumberFromName(result.toString().trim());
-		var mesNombre = month[mes];
-		var fechaSinMes = fechaSinFormato.replace(result, "");
-		fecha = mesNombre + ' ' + fechaSinMes;
-
 		var patt2 = /(2011|2012|2013|2014|2015|2016)/g;
 		yearBoletin = fechaSinFormato.match(patt2);
 	});
 
-	var boletinSinEspacios = boletin.replace(/ /g, "_");
+	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
 	var fechaSinCodificacion = fecha;
 	fechaCodificada = Date.parse(fechaSinCodificacion);
 
