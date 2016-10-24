@@ -91,6 +91,22 @@ module.exports = {
 		}
 		return res;
 	},
+
+	filtrarFecha: function (datos){
+		
+		var pos = datos.indexOf("n:");
+		var fechaSinFiltro = datos.slice(pos + 2);
+		var posTres = fechaSinFiltro.indexOf(",");
+		var fechaSinFormato = fechaSinFiltro.slice(posTres + 1);
+		var patt1 = /(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)/g;
+		var result = fechaSinFormato.match(patt1);
+		//var result2 = result.toLocaleLowerCase();
+		var mes = Date.getMonthNumberFromName(result.toString().trim());
+		var mesNombre = month[mes];
+		var fechaSinMes = fechaSinFormato.replace(result, "");
+		var fecha = mesNombre + ' ' + fechaSinMes;
+		return fecha;
+	},
 	
 	sleep: function (ms){
 		var waitTill = new Date(new Date().getTime() + ms);
