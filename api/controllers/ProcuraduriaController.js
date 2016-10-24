@@ -44,58 +44,54 @@ month[11] = "Dec";
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 //Módulos que se van hacer públicos
 module.exports = {
-	/**
-	  Descripción: método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria y
-	  guarda los datos importantes en la BD.
-	  req: Request
-	  res: Response
-	 */
-	
-	/**
-	  Descripción: método que hace la búsqueda y recopilación a los boletines del 2010 y años anteriores de la procuraduría.
-	  req: Request
-	  res: Response
-	 */
-	
+		/**
+		  Descripción: método que hace la búsqueda y recopilación a los boletines del 2011 y años posteriores de la procuraduria y
+		  guarda los datos importantes en la BD.
+		  req: Request
+		  res: Response
+		 */
+		boletinesNuevos: function(req, res) {
 
-	boletinesNuevos: function(req, res) {
+			console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
 
-		console.log('Recurso para tomar datos de todos (' + process.env.NUM_RESULT_PROCU_NUEVOS + ')los boletines del 2011 hacia adelante.');
+			contador = 1;
+			boletinesNuevosError = [];
+			//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
+			//selecciona el numero de resultados del paginador de la procuraduria para cada año.
+			var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
 
-		contador = 1;
-		boletinesNuevosError = [];
-		//variable de entorno para mejorar la selecion en el ambiente de desarrollo.
-		//selecciona el numero de resultados del paginador de la procuraduria para cada año.
-		var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+			var numeroResultados;
+			try {
+				numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
+			} catch (e) {
+				console.error('variable no definida: ' + e);
+				return;
+			}
+			for (var key in onceArray) {
+				interpretaBoletin(key, onceArray, numeroResultados);
+			}
+		},
+		/**
+		  Descripción: método que hace la búsqueda y recopilación a los boletines del 2010 y años anteriores de la procuraduría.
+		  req: Request
+		  res: Response
+		 */
+		boletinesAntiguos: function(req, res) {
 
-		var numeroResultados;
-		try {
-			numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
-		} catch (e) {
-			console.error('variable no definida: ' + e);
-			return;
-		}
-		for (var key in onceArray) {
-			interpretaBoletin(key, onceArray, numeroResultados);
-		}
-	},
-
-	boletinesAntiguos: function(req, res) {
-
-		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
-		var boletinesFalsos = [];
-		bucleContador(cantBoletinesArray[y], y);
-		if (y > 6) {
-			return;
+			console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
+			var boletinesFalsos = [];
+			bucleContador(cantBoletinesArray[y], y);
+			if (y > 6) {
+				return;
+			}
 		}
 	}
-}
-/*
-  Descripción: Interpreta un archivo html
-  root: ruta local del archivo
-  stat: status de la lectura del archivo con atributos básicos
-  next: callback al siguiente archivo
- */
+	/*
+	  Descripción: Interpreta un archivo html de la lista de boletínes de la página de la procuraduría
+	  key: variable que controlael valor de la posicion de array que maneja los años.
+	  onceArray: array que contienen los años para el recurso que recupera los boletines nuevos 
+	  numeroResultados: variable globar para controlar el numero de resultados del paginador del la página de la procuraduria.
+	 */
 function interpretaBoletin(key, onceArray, numeroResultados) {
 	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
 	try {
@@ -107,10 +103,10 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
 					var url = $(this).attr('href');
 					if (url === undefined)
 						return;
-					//var nombreUno = $(this).text().toString();
+
 					utils.sleep(500);
-					var url = 'http://www.procuraduria.gov.co/portal/' + url;
-					var cuerpo = escribirArchivoHtml(url);
+					var urla = 'http://www.procuraduria.gov.co/portal/' + url;
+					var cuerpo = llamarDb(urla, url);
 				});
 			} else {
 				utils.registrarError(error, urla);
@@ -120,22 +116,18 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
 		utils.registrarError(e, urla);
 	}
 }
-
-
 /*
-  Descripción: Escribe un archivo html en el disco
-  nombreUno: Nombre completo del archivo con caracteres especiales
-  urla : url del archivo remoto
+  Descripción: Llama a la funcion que graba en base de datos y escribe en disco el archivo html 
+  urla : ruta web global dek archivo html
+  url: ruta especifica del archivo html
  */
-function escribirArchivoHtml(urla) {
+function llamarDb(urla, url) {
 	//+var nombreSinEspacios = utils.eliminarCaracteresEspeciales(nombreUno, true);
 	//+var ruta = '/htmlBoletines/' + nombreSinEspacios + '.html';
 	try {
-		//var writeStream = fs.createWriteStream('.' + ruta);
 		request(urla, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var dataBd = extraerBolBd(body, urla);
-				//+console.log(archivoActual + ' de ' + totalBusqueda);
+				var dataBd = extraerBolBd(body, url);
 				dbManager.agregarBoletinToDB(dataBd);
 			} else {
 				utils.registrarError(error, urla);
@@ -215,7 +207,6 @@ function extraerBolBd(cuerpo, url) {
 
 	dirLocalHtml = './htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html';
 	var infoBoletin = 'Boletin: ' + boletinSinEspacios;
-
 
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
@@ -351,8 +342,10 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 	}
 	var boletinSinEspacios = boletin.replace(/ /g, "_");
 
+	var writeStream = fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html');
+
 	//crea los archivos HTML de los boletines analizados.
-	request(dirInterna).pipe(fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html'));
+	request(dirInterna).pipe(writeStream);
 	boletinArray.length = 0;
 
 	//Relacionado con
