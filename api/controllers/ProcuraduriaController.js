@@ -302,9 +302,13 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 	var textoCompletoUno = utils.filtrarTextoBoletines(boletinArray).textoCompletoUno;
 	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
 	var writeStream = fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html');
+	try {
+		//crea los archivos HTML de los boletines analizados.
+		request(dirInterna).pipe(writeStream);
+	} catch (e) {
+		console.log('error en el pipe con el boletín');
+	}
 
-	//crea los archivos HTML de los boletines analizados.
-	request(dirInterna).pipe(writeStream);
 	boletinArray.length = 0;
 
 	//Relacionado con
