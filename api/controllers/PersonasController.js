@@ -57,6 +57,9 @@ module.exports = {
 						.replace(/\?/g, "")
 						.replace(/\\/g, "");
 
+
+					global.gc();
+
 					//var writeStream = fs.createWriteStream('./htmls/' + nombreSinEspacios + '.html');
 					var waitTill = new Date(new Date().getTime() + 500);
 					while (waitTill > new Date()) {}
