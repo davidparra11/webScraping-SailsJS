@@ -16,6 +16,7 @@ var request = require('request'),
 
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
+	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
 	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
 	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	onceArray = [8, 9, 10, 11, 12, 13],
@@ -264,26 +265,37 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 
 	var boletin = boletinArray.slice(0, 1).toString();
 	var titulo = boletinArray.slice(1, 2).toString();
-	//numero boletin
-	if (boletin.length == 31) {
-		boletin = boletin.slice(20).toUpperCase();
-	} else if (boletinArray[1].toString().length == 31) {
-		boletin = boletinArray[1].toString().slice(20).toUpperCase();
-	} else {
-		$('td.marcogris2').each(function() {
-			var datoBoletin = $(this).text();
-			boletin = datoBoletin.slice(20).toUpperCase();
-		});
+	try {
+		//numero boletin
+		if (boletin.length == 31) {
+			boletin = boletin.slice(20).toUpperCase();
+		} else if (boletinArray[1].toString().length == 31) {
+			boletin = boletinArray[1].toString().slice(20).toUpperCase();
+		} else {
+			$('td.marcogris2').each(function() {
+				var datoBoletin = $(this).text();
+				boletin = datoBoletin.slice(20).toUpperCase();
+			});
+		}
+	} catch (e) {
+		console.log('error en la separacion con el boletín');
+
 	}
-	//titulo
-	if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
-		titulo = titulo.trim().toUpperCase();
-	} else if (boletinArray[0].length > 31) {
-		titulo = boletinArray[0].toString().trim().toUpperCase();
-	} else {
-		titulo = boletinArray[1].toString().toUpperCase();
-		if (boletinArray[1].toString().length < 15)
-			titulo = 'COMUNICADO DE PRENSA';
+
+	try {
+
+		//titulo
+		if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
+			titulo = titulo.trim().toUpperCase();
+		} else if (boletinArray[0].length > 31) {
+			titulo = boletinArray[0].toString().trim().toUpperCase();
+		} else {
+			titulo = boletinArray[1].toString().toUpperCase();
+			if (boletinArray[1].toString().length < 15)
+				titulo = 'COMUNICADO DE PRENSA';
+		}
+	} catch (e) {
+		console.log('error en la separacion con el boletín');
 	}
 
 	var textoUnoDos = utils.filtrarTextoBoletines(boletinArray).textoUnoDos;
