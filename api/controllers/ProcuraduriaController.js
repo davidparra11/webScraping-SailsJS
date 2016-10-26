@@ -98,7 +98,10 @@ module.exports = {
 	  numeroResultados: variable globar para controlar el numero de resultados del paginador del la página de la procuraduria.
 	 */
 function interpretaBoletin(key, onceArray, numeroResultados) {
-	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
+	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.' + 
+	'frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + 
+	onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
+	
 	try {
 		request(direccionWeb, function(err, resp, body) {
 			if (!err && resp.statusCode == 200) {
@@ -131,15 +134,27 @@ function llamarDb(urla, url) {
 	//+var ruta = '/htmlBoletines/' + nombreSinEspacios + '.html';
 	try {
 		request(urla, function(error, response, body) {
-			if (!error && response.statusCode == 200) {
-				var dataBd = extraerBolBd(body, url);
-				dbManager.agregarBoletinToDB(dataBd);
+			if (!error && response.statusCode == 200)
+			 {
+				var data = extraerBolBd(body, url);
+				escribirBoletin(body, data[1])
+				dbManager.agregarBoletinToDB(data[0]);
 			} else {
 				utils.registrarError(error, urla);
 			}
 		});
 	} catch (e) {
 		utils.registrarError(e, urla);
+	}
+}
+function escribirBoletin(cuerpo, data){
+	try {
+		 var ruta = './htmlBoletines/' + data.yearBoletin + '_' + data.boletinSinEspacios + '.html';
+		 fs.writeFileSync(ruta, cuerpo);
+
+	} catch (er) {
+		console.log('er: ' + er);
+
 	}
 }
 /*
@@ -193,28 +208,25 @@ function extraerBolBd(cuerpo, url) {
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
 	utils.sleep(500);
-	try {
-		var writeStream = fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html');
-		request('http://www.procuraduria.gov.co/portal/' + url).pipe(writeStream);
-		writeStream.on('error', function(err) {
-			console.log('ERROR ON: ' + err);
-		});
 
-	} catch (er) {
-		console.log('er: ' + er);
-
-	}
 	//IngresaLista
 	var fecha = utils.fechaHoy();
 	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
 	consecCodigo++;
 	//Retornamos un json con los valores que debe recibir la base de datos
-	return {
-		CODIGO: 'TMP_' + consecCodigo,
-		RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
-		ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
-		FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
-		ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
+	return [
+		{
+			CODIGO: 'TMP_' + consecCodigo,
+			RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
+			ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
+			FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
+			ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
+		},
+		{
+			yearBoletin : yearBoletin,
+			boletinSinEspacios : boletinSinEspacios
+		}
+		]
 	};
 }
 
