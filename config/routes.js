@@ -81,6 +81,6 @@ module.exports.routes = {
 
   'GET /boletinesNuevos': 'ProcuraduriaController.boletinesNuevos',
 
-  'GET /boletinesAntiguos': 'ProcuraduriaController.boletinesAntiguos'
+  'GET /boletinesAntiguos': 'ProcuraduriaOldController.boletinesAntiguos'
 
 };
