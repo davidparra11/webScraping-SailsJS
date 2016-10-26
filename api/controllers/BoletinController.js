@@ -196,9 +196,9 @@ module.exports = {
 
 		console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
 		// numero exacto de boletines por año.
-		//var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429]; 
+		var cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429]; 
 		// arry de prueba para los boletines.
-		var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
+		//var cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28];
 
 		var boletinesFalsos = [];
 

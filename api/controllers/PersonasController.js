@@ -55,6 +55,7 @@ module.exports = {
 						.trim()
 						.replace(/ /g, '_')
 						.replace(/\?/g, "")
+						.replace(/\//g, "")
 						.replace(/\\/g, "");
 
 
@@ -247,7 +248,7 @@ module.exports = {
 
 	generarHtml: function(req, res) {
 
-		request('http://www.sigep.gov.co/hdv/-/directorio/M1846088-4714-4/view').pipe(fs.createWriteStream('./htmls/PruebaProcu.html'));
+		request('http://www.sigep.gov.co/hdv/-/directorio/M107939-6139-4/view').pipe(fs.createWriteStream('./htmlsPrueba/PruebaProcu.html'));
 		return res.view('contraloria');
 	},
 

@@ -16,10 +16,14 @@ var request = require('request'),
 
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
-	//cantBoletinesArray = [933, 726, 637, 539, 462, 439, 429],
-	cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
-	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
-	onceArray = [8, 9, 10, 11, 12, 13],
+	//cantBoletinesArray = [933, 726, 637, 539, 400, 439, 429],//461
+	//cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
+	cantBoletinesArray = [933, 726],
+	yearArray = [2010, 2009],
+	//yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
+	//onceArray = [8, 9, 10, 11, 12, 13],
+	onceArray = [8],
+	//onceYearArray = [2011, 2012],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
 	i = 1,
 	year = 2010,
@@ -82,7 +86,7 @@ module.exports = {
 			console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
 			var boletinesFalsos = [];
 			bucleContador(cantBoletinesArray[y], y);
-			if (y > 6) {
+			if (y > 1) {
 				return;
 			}
 		}
@@ -105,7 +109,8 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
 					if (url === undefined)
 						return;
 
-					utils.sleep(500);
+					//utils.sleep(500);
+					console.log('archivo: -' + url);
 					var urla = 'http://www.procuraduria.gov.co/portal/' + url;
 					var cuerpo = llamarDb(urla, url);
 				});
@@ -165,11 +170,11 @@ function extraerBolBd(cuerpo, url) {
 			var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
 		});
 	}
-	//titulo boletín
-	var titulo = $('h2.prueba').text().trim().toUpperCase();
+	//titulo 
+	var titulo = String($('h2.prueba').text().trim());
 
-	//boletin  boletín
-	var boletin = $('h3.news-view-subtitle').text().trim().toUpperCase();
+	//boletin  
+	var boletin = String($('h3.news-view-subtitle').text().trim());
 
 	//fecha y fuente.
 	$('h4').each(function() {
@@ -187,9 +192,18 @@ function extraerBolBd(cuerpo, url) {
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
+	utils.sleep(500);
+	try {
+		var writeStream = fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html');
+		request('http://www.procuraduria.gov.co/portal/' + url).pipe(writeStream);
+		writeStream.on('error', function(err) {
+			console.log('ERROR ON: ' + err);
+		});
 
-	request('http://www.procuraduria.gov.co/portal/' + url).pipe(fs.createWriteStream('./htmlBoletines/' + yearBoletin + '_' + boletinSinEspacios + '.html'));
+	} catch (er) {
+		console.log('er: ' + er);
 
+	}
 	//IngresaLista
 	var fecha = utils.fechaHoy();
 	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
@@ -205,7 +219,7 @@ function extraerBolBd(cuerpo, url) {
 }
 
 function bucleContador(totContador, llave) {
-	if (y > 6) {
+	if (y > 1) {
 		return;
 	}
 	if (i === undefined)
@@ -216,6 +230,7 @@ function bucleContador(totContador, llave) {
 		bucleContador(cantBoletinesArray[y], y);
 	}
 	i++;
+	utils.sleep(500);
 	loopBoletin(i, llave);
 }
 
@@ -231,6 +246,7 @@ function loopBoletin(i, llave) {
 	try {
 		request(dirInterna, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
+				console.log('archivo: ' + dirInterna);
 				var dataBd = extraerBolAntiguoBd(body, dirInterna, llave);
 				dbManager.agregarBoletinToDB(dataBd);
 			} else {
@@ -250,7 +266,7 @@ function loopBoletin(i, llave) {
   urlb : url del archivo remoto
  */
 function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
-
+	utils.sleep(500);
 	var $ = cheerio.load(cuerpo);
 	var fechaCodificada = '';
 	var fecha = '';
@@ -263,27 +279,25 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 			fecha = fechaArray;
 	});
 
-	var boletin = boletinArray.slice(0, 1).toString();
+	var boletin = String(boletinArray.slice(0, 1).toString());
 	var titulo = boletinArray.slice(1, 2).toString();
 	try {
 		//numero boletin
-		if (boletin.length == 31) {
-			boletin = boletin.slice(20).toUpperCase();
-		} else if (boletinArray[1].toString().length == 31) {
-			boletin = boletinArray[1].toString().slice(20).toUpperCase();
+		if (String(boletin).length == 31) {
+			boletin = boletin.toString().slice(20).toUpperCase();
+		} else if (String(boletinArray[1]).length == 31) {
+			boletin = String(boletinArray[1].toString().slice(20));
 		} else {
 			$('td.marcogris2').each(function() {
 				var datoBoletin = $(this).text();
-				boletin = datoBoletin.slice(20).toUpperCase();
+				boletin = String(datoBoletin.toString()).slice(20);
 			});
 		}
 	} catch (e) {
 		console.log('error en la separacion con el boletín');
 
 	}
-
 	try {
-
 		//titulo
 		if (titulo.length > 33 && boletinArray[0].toString().length == 31) {
 			titulo = titulo.trim().toUpperCase();
@@ -301,10 +315,15 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 	var textoUnoDos = utils.filtrarTextoBoletines(boletinArray).textoUnoDos;
 	var textoCompletoUno = utils.filtrarTextoBoletines(boletinArray).textoCompletoUno;
 	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
-	var writeStream = fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html');
+
 	try {
 		//crea los archivos HTML de los boletines analizados.
+		var writeStream = fs.createWriteStream('./htmlBoletines/' + yearArray[llave] + '_' + boletinSinEspacios + '.html');
 		request(dirInterna).pipe(writeStream);
+
+		writeStream.on('error', function(err) {
+			console.log('ERROR ON: ' + err);
+		});
 	} catch (e) {
 		console.log('error en el pipe con el boletín');
 	}

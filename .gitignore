@@ -75,6 +75,8 @@ imgBoletines
 Contraloria
 Contralorias
 Contraloriass
+htmlsPrueba
+
 
 ################################################
 # Sails.js / Waterline / Grunt
@@ -84,6 +86,7 @@ Contraloriass
 ################################################
 .tmp
 dump.rdb
+.vscode
 
 
 
