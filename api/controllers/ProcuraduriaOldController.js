@@ -1,5 +1,5 @@
 /**
- * ProcuraduriaController
+ * ProcuraduriaOldController
  *
  * @description :: Server-side logic for managing boletins
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
@@ -13,7 +13,6 @@ var request = require('request'),
 	dbManager = require('../utlities/dbManager'),
 	testDate = require('date-utils').language("es");
 
-
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
 	//cantBoletinesArray = [933, 726, 637, 539, 400, 439, 429],//461
@@ -21,19 +20,12 @@ var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.p
 	cantBoletinesArray = [933, 726],
 	yearArray = [2010, 2009],
 	//yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
-	//onceArray = [8, 9, 10, 11, 12, 13],
-	onceArray = [8],
-	//onceYearArray = [2011, 2012],
-	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
 	i = 1,
 	year = 2010,
 	linksArray = [],
 	y = 0,
-	now = moment();
-
-var consecCodigo = 0;
-
-
+	now = moment(),
+	consecCodigo = 0;
 //Módulos que se van hacer públicos
 module.exports = {
 		/**
@@ -51,7 +43,6 @@ module.exports = {
 			}
 		}
 	}
-	
 
 function bucleContador(totContador, llave) {
 	if (y > 1) {
@@ -99,10 +90,8 @@ function escribirBoletin(cuerpo, data){
 	try {
 		 var ruta = './htmlBoletines/' + data.yearArray + '_' + data.boletinSinEspacios + '.html';
 		 fs.writeFileSync(ruta, cuerpo);
-
 	} catch (er) {
 		console.log('er: ' + er);
-
 	}
 }
 /*
@@ -170,14 +159,11 @@ function extraerBolAntiguoBd(cuerpo, dirInterna, llave) {
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
 	utils.sleep(500);
-
 	//IngresaLista
 	var fecha = utils.fechaHoy();
 	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
 	consecCodigo++;
 	//Retornamos un json con los valores que debe recibir la base de datos
-	
-
 	var arrayResultado = [
 		{
 			CODIGO: 'TMP_' + consecCodigo,

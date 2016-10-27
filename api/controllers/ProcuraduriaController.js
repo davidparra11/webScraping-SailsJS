@@ -13,10 +13,8 @@ var request = require('request'),
 	dbManager = require('../utlities/dbManager'),
 	testDate = require('date-utils').language("es");
 
-
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
-	//yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	//onceArray = [8, 9, 10, 11, 12, 13],
 	onceArray = [8],
 	//onceYearArray = [2011, 2012],
@@ -25,23 +23,8 @@ var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.p
 	year = 2010,
 	linksArray = [],
 	y = 0,
-	now = moment();
-
-var consecCodigo = 0;
-var month = new Array();
-month[0] = "Jan";
-month[1] = "Feb";
-month[2] = "Mar";
-month[3] = "Apr";
-month[4] = "May";
-month[5] = "Jun";
-month[6] = "Jul";
-month[7] = "Aug";
-month[8] = "Sep";
-month[9] = "Oct";
-month[10] = "Nov";
-month[11] = "Dec";
-
+	now = moment(),
+	consecCodigo = 0;
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
 //Módulos que se van hacer públicos
 module.exports = {
