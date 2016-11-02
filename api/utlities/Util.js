@@ -76,7 +76,7 @@ module.exports = {
 	},
 
 	registrarError: function(err, url) {
-		console.log('Error: ' + err + 'URL: ' + url);
+		console.log('Error: ' + err + ' URL: ' + url);
 		console.log('Detalles: ', util.inspect(err, {
 			showHidden: true,
 			depth: 2

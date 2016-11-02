@@ -15,11 +15,11 @@ var request = require('request'),
 
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
-	//cantBoletinesArray = [933, 726, 637, 539, 400, 439, 429],//461
+	cantBoletinesArray = [933, 726, 637, 539, 461, 439, 429],//461
 	//cantBoletinesArray = [22, 23, 24, 25, 26, 27, 28],
-	cantBoletinesArray = [933, 726],
-	yearArray = [2010, 2009],
-	//yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
+	//cantBoletinesArray = [933, 726],
+	//yearArray = [2010, 2009],
+	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
 	i = 1,
 	year = 2010,
 	linksArray = [],
@@ -35,7 +35,7 @@ module.exports = {
 		 */
 		boletinesAntiguos: function(req, res) {
 
-			console.log('Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
+			console.log('-Recurso para tomar datos de todos los boletines del 2010 hacia atrás...');
 			var boletinesFalsos = [];
 			bucleContador(cantBoletinesArray[y], y);
 			if (y > 1) {

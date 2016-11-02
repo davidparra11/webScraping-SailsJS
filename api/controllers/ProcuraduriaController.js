@@ -15,14 +15,12 @@ var request = require('request'),
 
 var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
 	boletinArray = [],
-	//onceArray = [8, 9, 10, 11, 12, 13],
-	onceArray = [8],
+	onceArray = [8, 9, 10, 11, 12, 13],
+	//onceArray = [8, 9],
 	//onceYearArray = [2011, 2012],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
-	i = 1,
 	year = 2010,
 	linksArray = [],
-	y = 0,
 	now = moment(),
 	consecCodigo = 0;
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
@@ -77,7 +75,7 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
 					if (url === undefined)
 						return;
 
-					//utils.sleep(500);
+					utils.sleep(2000);
 					console.log('archivo: -' + url);
 					var urla = 'http://www.procuraduria.gov.co/portal/' + url;
 					var cuerpo = llamarDb(urla, url);
@@ -172,7 +170,7 @@ function extraerBolBd(cuerpo, url) {
 	//Relacionado con
 	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
 	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
-	utils.sleep(500);
+	//+utils.sleep(500);
 
 	//IngresaLista
 	var fecha = utils.fechaHoy();
