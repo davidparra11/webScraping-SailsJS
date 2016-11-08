@@ -75,7 +75,7 @@ function loopBoletin(i, llave) {
 				console.log('archivo: ' + dirInterna);
 				var data = extraerBolAntiguoBd(body, dirInterna, llave);
 				escribirBoletin(body, data[1]);
-				dbManager.agregarBoletinToDB(data);
+				dbManager.agregarBoletinToDB(data[0]);
 			} else {
 				utils.registrarError(error, dirInterna);
 			}
