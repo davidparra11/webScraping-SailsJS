@@ -20,7 +20,7 @@ var dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.p
 	//onceYearArray = [2011, 2012],
 	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
 	year = 2010,
-	linksArray = [],
+	linksArrayFile = [],
 	now = moment(),
 	consecCodigo = 0;
 //http://www.procuraduria.gov.co/html/noticias_2010/noticias_929.htm
@@ -61,10 +61,10 @@ module.exports = {
 	  numeroResultados: variable globar para controlar el numero de resultados del paginador del la página de la procuraduria.
 	 */
 function interpretaBoletin(key, onceArray, numeroResultados) {
-	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.' + 
-	'frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' + 
-	onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
-	
+	var direccionWeb = 'http://www.procuraduria.gov.co/portal/index.jsp?option=net.comtor.cms.' +
+		'frontend.component.pagefactory.NewsComponentPageFactory&action=view-category&category=' +
+		onceArray[key] + '&wpgn=null&max_results=' + numeroResultados + '&first_result=0';
+
 	try {
 		request(direccionWeb, function(err, resp, body) {
 			if (!err && resp.statusCode == 200) {
@@ -81,7 +81,7 @@ function interpretaBoletin(key, onceArray, numeroResultados) {
 					var cuerpo = llamarDb(urla, url);
 				});
 			} else {
-				utils.registrarError(error, urla);
+				utils.registrarError(err, urla);
 			}
 		})
 	} catch (e) {
@@ -97,8 +97,7 @@ function llamarDb(urla, url) {
 	//+var ruta = '/htmlBoletines/' + nombreSinEspacios + '.html';
 	try {
 		request(urla, function(error, response, body) {
-			if (!error && response.statusCode == 200)
-			 {
+			if (!error && response.statusCode == 200) {
 				var data = extraerBolBd(body, url);
 				escribirBoletin(body, data[1]);
 				dbManager.agregarBoletinToDB(data[0]);
@@ -107,88 +106,95 @@ function llamarDb(urla, url) {
 			}
 		});
 	} catch (e) {
+		console.log('ARRAY: ' + linksArrayFile);
+		console.log('URL: ' + url);
+		console.log('URLA: ' + urla);
 		utils.registrarError(e, urla);
+		linksArrayFile.push(urla);
+
 	}
 }
-function escribirBoletin(cuerpo, data){
+
+function escribirBoletin(cuerpo, data) {
 	try {
-		 var ruta = './htmlBoletines/' + data.yearBoletin + '_' + data.boletinSinEspacios + '.html';
-		 fs.writeFileSync(ruta, cuerpo);
+		var ruta = './htmlBoletines/' + data.yearBoletin + '_' + data.boletinSinEspacios + '.html';
+		fs.writeFileSync(ruta, cuerpo, (err) => {
+				if (err) throw err;
+				console.log('It\'s saved!');
 
-	} catch (er) {
-		console.log('er: ' + er);
-
+			});
 	}
-}
-/*
-  Descripción: Extrae los valores de los boletínes requeridos por la base de datos
-  err: Mensaje de error retornado por el request
-  resp: Código respuesta del request
-  body: Contenido de la respuesta del request
-  url : url del boletin de la procuraduria.
- */
-function extraerBolBd(cuerpo, url) {
-	var bodyWithCorrectEncoding = iconv.decode(cuerpo, 'iso-8859-1');
-	var $ = cheerio.load(bodyWithCorrectEncoding);
-	var textoUno = "";
-	var fecha = "";
-	var fuente = "";
-	var yearBoletin = "";
+		catch (er) {
+			console.log('Er en Manejador de errores: ' + er);
 
-	//texto boletín
-	var texto = $('p.MsoNormal').text().trim().toUpperCase();
-	var posParrafo = texto.indexOf(".");
-	var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+		}
+	}
+	/*
+	  Descripción: Extrae los valores de los boletínes requeridos por la base de datos
+	  err: Mensaje de error retornado por el request
+	  resp: Código respuesta del request
+	  body: Contenido de la respuesta del request
+	  url : url del boletin de la procuraduria.
+	 */
+	function extraerBolBd(cuerpo, url) {
+		var bodyWithCorrectEncoding = iconv.decode(cuerpo, 'iso-8859-1');
+		var $ = cheerio.load(bodyWithCorrectEncoding);
+		var textoUno = "";
+		var fecha = "";
+		var fuente = "";
+		var yearBoletin = "";
 
-	if (texto === undefined || texto == "") {
-		$('div[align=justify]').each(function() {
+		//texto boletín
+		var texto = $('p.MsoNormal').text().trim().toUpperCase();
+		var posParrafo = texto.indexOf(".");
+		var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+
+		if (texto === undefined || texto == "") {
+			$('div[align=justify]').each(function() {
+				var datos = $(this).last().text();
+				texto = datos.trim().toUpperCase();
+				var posParrafo = texto.indexOf(".");
+				var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+			});
+		}
+		//titulo 
+		var titulo = String($('h2.prueba').text().trim());
+
+		//boletin  
+		var boletin = String($('h3.news-view-subtitle').text().trim());
+
+		//fecha y fuente.
+		$('h4').each(function() {
 			var datos = $(this).last().text();
-			texto = datos.trim().toUpperCase();
-			var posParrafo = texto.indexOf(".");
-			var textoUnoDos = texto.slice(0, posParrafo).toUpperCase();
+			fecha = utils.filtrarFecha(datos).fecha;
+
+			var posIni = datos.indexOf(":");
+			var posDos = datos.indexOf("Fecha");
+			fuente = datos.slice(posIni + 1, posDos);
+
+			yearBoletin = utils.filtrarFecha(datos).yearBoletin;
 		});
-	}
-	//titulo 
-	var titulo = String($('h2.prueba').text().trim());
 
-	//boletin  
-	var boletin = String($('h3.news-view-subtitle').text().trim());
+		var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
+		//Relacionado con
+		var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
+		var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
+		//+utils.sleep(500);
 
-	//fecha y fuente.
-	$('h4').each(function() {
-		var datos = $(this).last().text();
-		fecha = utils.filtrarFecha(datos).fecha;
-
-		var posIni = datos.indexOf(":");
-		var posDos = datos.indexOf("Fecha");
-		fuente = datos.slice(posIni + 1, posDos);
-
-		yearBoletin = utils.filtrarFecha(datos).yearBoletin;
-	});
-
-	var boletinSinEspacios = utils.eliminarCaracteresEspeciales(boletin, true);
-	//Relacionado con
-	var relacionadoConDefault = 'PROCURADURIA: DIRECTORIO DE BOLETINES ';
-	var relacionadoCon = relacionadoConDefault + ', ' + boletin + ': ' + titulo + '. ' + textoUnoDos;
-	//+utils.sleep(500);
-
-	//IngresaLista
-	var fecha = utils.fechaHoy();
-	var ingresaLista = 'INGRESA_LISTA: ' + fecha;
-	consecCodigo++;
-	//Retornamos un json con los valores que debe recibir la base de datos
-	var arrayResultado = [
-		{
+		//IngresaLista
+		var fecha = utils.fechaHoy();
+		var ingresaLista = 'INGRESA_LISTA: ' + fecha;
+		consecCodigo++;
+		//Retornamos un json con los valores que debe recibir la base de datos
+		var arrayResultado = [{
 			CODIGO: 'TMP_' + consecCodigo,
 			RELACIONADO_CON: utils.eliminarCaracteresEspeciales(relacionadoCon, false),
 			ROL_O_DESCRIPCION1: utils.eliminarCaracteresEspeciales(texto, false),
 			FECHA_UPDATE: utils.eliminarCaracteresEspeciales(fecha, false),
 			ESTADO: utils.eliminarCaracteresEspeciales(ingresaLista, false),
-		},
-		{
-			yearBoletin : yearBoletin,
-			boletinSinEspacios : boletinSinEspacios
-		}
-		];
-	return arrayResultado;
-}
+		}, {
+			yearBoletin: yearBoletin,
+			boletinSinEspacios: boletinSinEspacios
+		}];
+		return arrayResultado;
+	}
