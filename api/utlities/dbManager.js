@@ -1,3 +1,4 @@
+var linksArrayBD = [];
 module.exports = {
 	/*
 	  Descripción: Funcion para agregar los datos de las Hojas de Vida de los contratistas a la Base de Datos.
@@ -20,7 +21,9 @@ module.exports = {
 		Personas.create(boletin)
 			.exec(function(error, res) {
 				if (error) {
-					console.log('error DB; boletin: ' + boletin.CODIGO + 'Error: ' + error);
+					linksArrayBD.push(boletin.CODIGO);
+					console.log('ARRAY: ' + linksArrayBD);
+					//console.log('error DB; boletin: ' + boletin.CODIGO + 'Error: ' + error);
 					return true;
 				} else {
 					console.log('OK, DB');
