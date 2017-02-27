@@ -70,7 +70,7 @@ request(direccionWeb, function(err, resp, body) {
       if (url === undefined)
         return;
 
-      utils.sleep(1000);
+      utils.sleep(100);
       console.log('archivo: -' + url);
       var urla = 'http://www.procuraduria.gov.co/portal/' + url;
       //var cuerpo = llamarDb(urla, url);
