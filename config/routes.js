@@ -60,11 +60,11 @@ module.exports.routes = {
 
 
 
-  // El método realiza un análisis en los archivos locales de la Contraloría. 
+  // El método realiza un análisis en los archivos locales de la Contraloría.
   'GET /contraloria': 'PersonasController.analizar',
   //Obtener todos los archivo de la ruta.
   'GET /archivosContraloria': 'PersonasController.recogerTodo',
-  //Método que desglosa los archivo html individualmente 
+  //Método que desglosa los archivo html individualmente
   'GET /individualContraloria': 'PersonasController.individualContraloria',
   //Método que genera un html
   'GET /generarHtml': 'PersonasController.generarHtml',
@@ -72,7 +72,7 @@ module.exports.routes = {
   'GET /descargaHtmls': 'PersonasController.descargaHtmls',
   //Método que analiza individualmente la HV del contratista.
   'GET /personaContraloria': 'PersonasController.personaContraloria',
-  
+
 
   'GET /descargaHtmls2': 'ContraloriaController.descargaHtmls2',
 
@@ -81,6 +81,8 @@ module.exports.routes = {
 
   'GET /boletinesNuevos': 'ProcuraduriaController.boletinesNuevos',
 
-  'GET /boletinesAntiguos': 'ProcuraduriaOldController.boletinesAntiguos'
+  'GET /boletinesAntiguos': 'ProcuraduriaOldController.boletinesAntiguos',
+
+  'GET /diario': 'ElDiarioController.secciones'
 
 };
