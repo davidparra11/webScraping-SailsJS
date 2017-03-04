@@ -30,7 +30,7 @@ module.exports.connections = {
   ***************************************************************************/
   localDiskDb: {
     adapter: 'sails-disk'
-  },
+  }
 
   /***************************************************************************
   *                                                                          *
@@ -41,30 +41,7 @@ module.exports.connections = {
   *                                                                          *
   ***************************************************************************/
  
-  mySql: {
-    adapter: 'sails-mysql',
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'sidifdb'
-  },
-
- 
- 
-  sqlServer: {
-    adapter: 'sails-sqlserver',
-    port: '1433',
-    user: 'sa',
-    password: 'Sa12345*',
-    host: 'sergiopttil'+ '\u005C' + 'sql2008r2',
-    database: 'sidifdb',
-    options: {
-                //encrypt: true // Use this if you're on Windows Azure
-                trustedConnection: true,
-                // port: 1444
-
-            }
-  }/**/
+  
 
 
 

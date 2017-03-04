@@ -1,19 +1,8 @@
 var request = require('request'),
 	cheerio = require('cheerio'),
 	fs = require('fs'),
-	dirProcuraduria2010 = 'http://www.procuraduria.gov.co/portal/Noticias-2010.page',
-	boletinArray = [],
-	boletinArrayHtml = [],
-	urls = [],
-	yearArray = [2010, 2009, 2008, 2007, 2006, 2005, 2004],
-	onceArray = [8, 9, 10, 11, 12, 13],
-	onceYearArray = [2011, 2012, 2013, 2014, 2015, 2016],
-	i = 1,
-	year = 2010,
-	//dirInterna = 'http://www.procuraduria.gov.co/html/noticias_' + year + '/noticias_00' + i + '.htm',
-	linksArray = [],
+	
 	utils = require('../utlities/Util');
-//Hola
 const util = require('util');
 var unorm = require('unorm');
 var iconv = require('iconv-lite');
@@ -34,21 +23,8 @@ secciones: function(req, res) {
 
   contador = 1;
   boletinesNuevosError = [];
-  interpretaBoletin();
-  //variable de entorno para mejorar la selecion en el ambiente de desarrollo.
-  //selecciona el numero de resultados del paginador de la procuraduria para cada año.
-  var numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
-
-  var numeroResultados;
-  try {
-    numeroResultados = process.env.NUM_RESULT_PROCU_NUEVOS;
-  } catch (e) {
-    console.error('variable no definida: ' + e);
-    return;
-  }
-  for (var key in onceArray) {
-    //interpretaSeccion(key, onceArray, numeroResultados);
-  }
+  interpretaPagina(req, res);
+ 
 }
 }
 /*
@@ -57,8 +33,9 @@ key: variable que controlael valor de la posicion de array que maneja los años.
 onceArray: array que contienen los años para el recurso que recupera los boletines nuevos
 numeroResultados: variable globar para controlar el numero de resultados del paginador del la página de la procuraduria.
 */
-function interpretaBoletin(key, onceArray, numeroResultados) {
+function interpretaPagina(req, res) {
 var direccionWeb = 'http://www.eldiario.com.co/inicio';
+var resultados = [];
 
 try {
 request(direccionWeb, function(err, resp, body) {
@@ -66,15 +43,17 @@ request(direccionWeb, function(err, resp, body) {
     //Carga el archivo en operador $
     var $ = cheerio.load(body);
     $('a').each(function() {
-      var url = $(this).attr('href');
+      var url = $(this).text();
       if (url === undefined)
         return;
-
-      utils.sleep(100);
+     // utils.sleep(100);
       console.log('archivo: -' + url);
-      var urla = 'http://www.procuraduria.gov.co/portal/' + url;
+      resultados.push(url);
       //var cuerpo = llamarDb(urla, url);
     });
+    res.view('diarioDelOtun', {
+            results: resultados
+        });
   } else {
     utils.registrarError(err, urla);
   }

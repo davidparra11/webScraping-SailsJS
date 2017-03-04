@@ -1,0 +1,45 @@
+ <div data-role="content">   
+
+
+    <div class="default-page">
+      <div class="header">
+        <h1 id="main-title" class="container"><%= __('Newsletter') %></h1>
+        <h3 class="container">WeBScraping para el <code>diariodelotun.com.co</code></h3>
+      </div>
+      <div class="main container clearfix">
+    <!-- <h1>Getting started</h1>
+    <p>Don't worry, we've got your back.</p> -->
+    <ul class="getting-started">
+     
+      <li class="clearfix">
+        <div class="step">
+          <div class="sprite two"></div>
+          <h3>
+            Resultados.
+          </h3>
+
+          <h1>Lista de Resultados <%= results[0]%></h1>
+
+          <ul>
+            <% for(var i=0; i<results.length; i++) {%>
+            <li><%= results[i] %></li>
+            <% } %>
+          </ul>
+
+        </div>
+      </li>
+      
+    </ul>
+
+
+    
+  </div>
+</div>
+
+
+
+</div>
+
+
+</div>
+

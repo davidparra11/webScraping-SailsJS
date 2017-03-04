@@ -48,41 +48,7 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
-  // El método realiza el análisis a los boletines de la procuradura del 2011 y después.
-  'GET /descargaBol2': 'BoletinController.descargaBol2',
-  // El método realiza el análisis a los boletines de la procuradura del 2010 y antes.
-  'GET /descargaBolAnti2': 'BoletinController.descargaBolAnti2',
-  // El método realiza el análisis a el boletin del 2010 o antes entrado como parametro GET .
-  'GET /individual': 'BoletinController.individual',
-  // El método realiza el análisis a los boletin del 2011 o después entrado como parametro.
-  'GET /individual2011': 'BoletinController.individual2011',
-
-
-
-
-  // El método realiza un análisis en los archivos locales de la Contraloría.
-  'GET /contraloria': 'PersonasController.analizar',
-  //Obtener todos los archivo de la ruta.
-  'GET /archivosContraloria': 'PersonasController.recogerTodo',
-  //Método que desglosa los archivo html individualmente
-  'GET /individualContraloria': 'PersonasController.individualContraloria',
-  //Método que genera un html
-  'GET /generarHtml': 'PersonasController.generarHtml',
-  //Método que descarga un archivo pfd para  .
-  'GET /descargaHtmls': 'PersonasController.descargaHtmls',
-  //Método que analiza individualmente la HV del contratista.
-  'GET /personaContraloria': 'PersonasController.personaContraloria',
-
-
-  'GET /descargaHtmls2': 'ContraloriaController.descargaHtmls2',
-
-
-  'GET /numeroLinks': 'LinksController.numeroLinks',
-
-  'GET /boletinesNuevos': 'ProcuraduriaController.boletinesNuevos',
-
-  'GET /boletinesAntiguos': 'ProcuraduriaOldController.boletinesAntiguos',
-
+  // mètodo para analizar los componentes del diario del otun.
   'GET /diario': 'ElDiarioController.secciones'
 
 };
