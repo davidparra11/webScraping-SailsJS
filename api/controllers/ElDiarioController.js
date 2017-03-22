@@ -42,7 +42,7 @@ request(direccionWeb, function(err, resp, body) {
   if (!err && resp.statusCode == 200) {
     //Carga el archivo en operador $
     var $ = cheerio.load(body);
-    $('a').each(function() {
+    $('.titular a').each(function() {
       var url = $(this).text();
       if (url === undefined)
         return;
